@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,8 +18,18 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 
 public class FindingFragment extends Fragment {
+
+    FirebaseDatabase database;
+    DatabaseReference kajianlist;
+
+    RecyclerView recyclerBookingList;
+    RecyclerView.LayoutManager layoutManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -25,7 +37,42 @@ public class FindingFragment extends Fragment {
         setTitle("Finding");
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setHasOptionsMenu(true);
+
+        database = FirebaseDatabase.getInstance();
+        kajianlist = database.getReference("KajianList");
+        View view = inflater.inflate(R.layout.fragment_finding, container, false);
+
+        //Load Booking List
+        recyclerBookingList = (RecyclerView) view.findViewById(R.id.recycler_finding);
+        recyclerBookingList.hasFixedSize();
+        layoutManager = new LinearLayoutManager(getActivity());
+        recyclerBookingList.setLayoutManager(layoutManager);
+        loadKajianList();
+
         return inflater.inflate(R.layout.fragment_finding, null);
+    }
+
+
+    public void loadKajianList() {
+        FirebaseRecyclerAdapter<KajianList, MenuViewHolder> adapter = new FirebaseRecyclerAdapter<KajianList, MenuViewHolder>(KajianList.class, R.layout.fragment_finding, MenuViewHolder.class, kajianlist) {
+            @Override
+            protected void populateViewHolder(MenuViewHolder viewHolder, KajianList model, int position) {
+                viewHolder.txtNama.setText(model.getNama());
+                viewHolder.txtOrganisasi.setText(model.getDepartemen());
+                viewHolder.txtKegiatan.setText(model.getKegiatan());
+                viewHolder.txtJamMulai.setText(model.getJamMulai());
+                viewHolder.txtJamAkhir.setText(model.getJamAkhir());
+
+                final KajianList clickItem = model;
+                viewHolder.setItemClickListener(new ItemClickListener() {
+                    @Override
+                    public void onCLick(View view, int position, boolean isLongClick) {
+
+                    }
+                });
+            }
+        };
+        recyclerBookingList.setAdapter(adapter);
     }
 
     public void setTitle(String title) {
