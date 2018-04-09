@@ -38,4 +38,6 @@ dependencies {
     compile 'com.firebaseui:firebase-ui-database:1.2.0'
 }
 
+
+
 apply plugin: 'com.google.gms.google-services'

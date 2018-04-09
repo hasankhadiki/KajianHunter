@@ -18,6 +18,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Login_Register.Login" />
+        <activity android:name=".Login_Register.Register"></activity>
     </application>
 
 </manifest>
