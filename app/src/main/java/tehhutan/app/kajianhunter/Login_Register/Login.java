@@ -1,6 +1,7 @@
 package tehhutan.app.kajianhunter.Login_Register;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -27,6 +28,7 @@ public class Login extends AppCompatActivity {
     private Button loginBtn;
     private TextView register;
     private FirebaseAuth otentikasi;
+    private ProgressDialog progress;
     private FirebaseAuth.AuthStateListener otentikasiListener;
     String saveIDuser;
 
@@ -35,15 +37,17 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        progress = new ProgressDialog(this);
         otentikasi = FirebaseAuth.getInstance();
         email=(EditText)findViewById(R.id.email_login);
         password=(EditText)findViewById(R.id.pass_login);
         loginBtn=(Button)findViewById(R.id.btn_login);
-        register=(Button)findViewById(R.id.register_login);
+        register=(TextView) findViewById(R.id.register_login);
         otentikasiListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if(firebaseAuth.getCurrentUser() != null){
+                    progress.dismiss();
                     saveIDuser = FirebaseDatabase.getInstance().getReference().toString();
                     startActivity(new Intent(Login.this, MainActivity.class));
                 }
@@ -81,6 +85,8 @@ public class Login extends AppCompatActivity {
     private void loginVerify(){
         String Email=email.getText().toString();
         String Pass=password.getText().toString();
+        progress.setMessage("Sedang masuk...!");
+        progress.show();
         otentikasi.signInWithEmailAndPassword(Email,Pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
