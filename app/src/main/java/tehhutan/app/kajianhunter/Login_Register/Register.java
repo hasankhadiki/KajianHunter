@@ -16,10 +16,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import tehhutan.app.kajianhunter.MainActivity;
 import tehhutan.app.kajianhunter.R;
 
 public class Register extends AppCompatActivity {
-    private EditText nama, email, no_wa, password;
+    private EditText nama, email, no_wa, password,retype_pass;
     private Button register;
     private FirebaseAuth otentikasi;
     private ProgressDialog progress;
@@ -36,7 +38,9 @@ public class Register extends AppCompatActivity {
         email = (EditText) findViewById(R.id.email_reg);
         no_wa = (EditText) findViewById(R.id.wa_reg);
         password = (EditText) findViewById(R.id.pass_reg);
+        retype_pass = (EditText) findViewById(R.id.retypepass_reg);
         register = (Button) findViewById(R.id.btn_register);
+
         register.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -50,29 +54,31 @@ public class Register extends AppCompatActivity {
 
     public void registerVerify(){
         final String Nama = nama.getText().toString().trim();
-        String Email = email.getText().toString().trim();
-        String Wa = no_wa.getText().toString().trim();
-        String Pass = password.getText().toString().trim();
+        final String Email = email.getText().toString().trim();
+        final String Wa = no_wa.getText().toString().trim();
+        final String Pass = password.getText().toString().trim();
+        final String Re_Pass = retype_pass.getText().toString().trim();
         char[] cekEmail = Email.toCharArray();
 
-        if(Nama.matches("") || Email.matches("") || Wa.matches("") || Pass.matches("")){
+        if(Nama.matches("") || Email.matches("") || Wa.matches("") || Pass.matches("") || Re_Pass.matches("")){
             Toast.makeText(Register.this, "Lengkapi form diatas!", Toast.LENGTH_LONG).show();
         }else if(!cekEmail(cekEmail)){
             Toast.makeText(Register.this, "Format email salah!", Toast.LENGTH_LONG).show();
         }else{
             progress.setMessage("Sedang mendaftar...!");
             progress.show();
-            otentikasi.createUserWithEmailAndPassword(Email, Pass). addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            otentikasi.createUserWithEmailAndPassword(Email, Pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if(task.isSuccessful()){
+                        AlertDialog.Builder builder_ = new AlertDialog.Builder(Register.this);
                         String id_user = otentikasi.getCurrentUser().getUid();
                         DatabaseReference current_user =  database.child(id_user);
                         current_user.child("Nama").setValue(Nama);
-                        current_user.child("Email").setValue(Nama);
-                        current_user.child("Wa").setValue(Nama);
+                        current_user.child("Email").setValue(Email);
+                        current_user.child("Wa").setValue(Wa);
+                        FirebaseAuth.getInstance().signOut();
                         progress.dismiss();
-                        AlertDialog.Builder builder_ = new AlertDialog.Builder(Register.this);
                         builder_.setMessage("Anda telah berhasil login.\nLogin sekarang ?")
                                 .setCancelable(false)
                                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -86,6 +92,9 @@ public class Register extends AppCompatActivity {
                         AlertDialog alert = builder_.create();
                         alert.setTitle("Selamat !");
                         alert.show();
+                    }else {
+                        progress.dismiss();
+                        Toast.makeText(Register.this, "Register gagal!", Toast.LENGTH_LONG).show();
                     }
                 }
             });

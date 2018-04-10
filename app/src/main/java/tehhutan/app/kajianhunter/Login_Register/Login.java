@@ -91,6 +91,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(!task.isSuccessful()){
+                    progress.dismiss();
                     AlertDialog.Builder builder_ = new AlertDialog.Builder(Login.this);
                     builder_.setMessage("Anda belum berhasil login.")
                             .setCancelable(false)
