@@ -15,16 +15,16 @@ public class MenuViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
 
     private ItemClickListener itemClickListener;
-    public MenuViewHolder(View view) {
-        super(view);
+    public MenuViewHolder(View itemView) {
+        super(itemView);
 
-        txtNama = (TextView)view.findViewById(R.id.txt_namalengkap);
-        txtKegiatan = (TextView)view.findViewById(R.id.txt_kegiatan);
-        txtOrganisasi = (TextView)view.findViewById(R.id.txt_organisasi);
-        txtJamMulai = (TextView)view.findViewById(R.id.txt_jammulai);
-        txtJamAkhir = (TextView)view.findViewById(R.id.txt_jamakhir);
+        txtNama = (TextView)itemView.findViewById(R.id.txt_namalengkap);
+        txtKegiatan = (TextView)itemView.findViewById(R.id.txt_kegiatan);
+        txtOrganisasi = (TextView)itemView.findViewById(R.id.txt_organisasi);
+        txtJamMulai = (TextView)itemView.findViewById(R.id.txt_jammulai);
+        txtJamAkhir = (TextView)itemView.findViewById(R.id.txt_jamakhir);
 
-        view.setOnClickListener(this);
+        itemView.setOnClickListener(this);
     }
 
     public void setItemClickListener(ItemClickListener itemClickListener) {

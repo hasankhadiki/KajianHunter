@@ -28,8 +28,6 @@ public class FindingFragment extends Fragment {
     FirebaseDatabase database;
     DatabaseReference kajianlist;
 
-    private KajianAdapter kajianAdapter;
-    private View view;
     RecyclerView recyclerBookingList;
     RecyclerView.LayoutManager layoutManager;
 
@@ -40,47 +38,42 @@ public class FindingFragment extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setHasOptionsMenu(true);
 
-        View view = inflater.inflate(R.layout.fragment_finding, container, false);
-
         database = FirebaseDatabase.getInstance();
         kajianlist = database.getReference("KajianList");
-
+        View view = inflater.inflate(R.layout.fragment_finding, container, false);
 
         //Load Booking List
         recyclerBookingList = (RecyclerView) view.findViewById(R.id.recycler_finding);
         recyclerBookingList.hasFixedSize();
         layoutManager = new LinearLayoutManager(getActivity());
-//        recyclerBookingList.setLayoutManager(layoutManager);
-        kajianAdapter = new KajianAdapter(KajianList.class, R.layout.fragment_finding, MenuViewHolder.class, kajianlist, getContext());
         recyclerBookingList.setLayoutManager(layoutManager);
-        recyclerBookingList.setAdapter(kajianAdapter);
-//        loadKajianList();
+        loadKajianList();
 
-        return view;
+        return inflater.inflate(R.layout.fragment_finding, null);
     }
 
 
-//    public void loadKajianList() {
-//        FirebaseRecyclerAdapter<KajianList, MenuViewHolder> adapter = new FirebaseRecyclerAdapter<KajianList, MenuViewHolder>(KajianList.class, R.layout.fragment_finding, MenuViewHolder.class, kajianlist) {
-//            @Override
-//            protected void populateViewHolder(MenuViewHolder viewHolder, KajianList model, int position) {
-//                viewHolder.txtNama.setText(model.getNama());
-//                viewHolder.txtOrganisasi.setText(model.getDepartemen());
-//                viewHolder.txtKegiatan.setText(model.getKegiatan());
-//                viewHolder.txtJamMulai.setText(model.getJamMulai());
-//                viewHolder.txtJamAkhir.setText(model.getJamAkhir());
-//
-//                final KajianList clickItem = model;
-//                viewHolder.setItemClickListener(new ItemClickListener() {
-//                    @Override
-//                    public void onCLick(View view, int position, boolean isLongClick) {
-//
-//                    }
-//                });
-//            }
-//        };
-//        recyclerBookingList.setAdapter(adapter);
-//    }
+    public void loadKajianList() {
+        FirebaseRecyclerAdapter<KajianList, MenuViewHolder> adapter = new FirebaseRecyclerAdapter<KajianList, MenuViewHolder>(KajianList.class, R.layout.fragment_finding, MenuViewHolder.class, kajianlist) {
+            @Override
+            protected void populateViewHolder(MenuViewHolder viewHolder, KajianList model, int position) {
+                viewHolder.txtNama.setText(model.getNama());
+                viewHolder.txtOrganisasi.setText(model.getDepartemen());
+                viewHolder.txtKegiatan.setText(model.getKegiatan());
+                viewHolder.txtJamMulai.setText(model.getJamMulai());
+                viewHolder.txtJamAkhir.setText(model.getJamAkhir());
+
+                final KajianList clickItem = model;
+                viewHolder.setItemClickListener(new ItemClickListener() {
+                    @Override
+                    public void onCLick(View view, int position, boolean isLongClick) {
+
+                    }
+                });
+            }
+        };
+        recyclerBookingList.setAdapter(adapter);
+    }
 
     public void setTitle(String title) {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
