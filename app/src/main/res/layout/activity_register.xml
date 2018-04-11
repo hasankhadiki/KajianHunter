@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
             android:ems="10"
-            android:hint="Nama"
+            android:text="Nama"
             android:background="@drawable/edit_text"
             android:padding="5dp" />
         <EditText
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
             android:ems="10"
-            android:hint="Email"
+            android:text="Email"
             android:inputType="textEmailAddress"
             android:background="@drawable/edit_text"
             android:padding="5dp" />
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
             android:ems="10"
-            android:hint="Wa"
+            android:text="Wa"
             android:inputType="textEmailAddress"
             android:background="@drawable/edit_text"
             android:padding="5dp" />
@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
             android:ems="10"
-            android:hint="Password"
+            android:text="Password"
             android:inputType="textEmailAddress"
             android:background="@drawable/edit_text"
             android:padding="5dp" />
@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
             android:ems="10"
-            android:hint="Masukkan kembali password"
+            android:text="Masukkan kembali password"
             android:inputType="textEmailAddress"
             android:background="@drawable/edit_text"
             android:padding="5dp" />

@@ -73,10 +73,10 @@ public class Register extends AppCompatActivity {
                     if(task.isSuccessful()){
                         AlertDialog.Builder builder_ = new AlertDialog.Builder(Register.this);
                         String id_user = otentikasi.getCurrentUser().getUid();
-                        DatabaseReference current_user =  database.child(id_user);
-                        current_user.child("Nama").setValue(Nama);
-                        current_user.child("Email").setValue(Email);
-                        current_user.child("Wa").setValue(Wa);
+                        DatabaseReference idRef =  database.child(id_user);
+                        idRef.child("Nama").setValue(Nama);
+                        idRef.child("Email").setValue(Email);
+                        idRef.child("Wa").setValue(Wa);
                         FirebaseAuth.getInstance().signOut();
                         progress.dismiss();
                         builder_.setMessage("Anda telah berhasil login.\nLogin sekarang ?")
