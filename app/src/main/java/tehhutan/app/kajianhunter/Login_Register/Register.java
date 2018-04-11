@@ -64,7 +64,11 @@ public class Register extends AppCompatActivity {
             Toast.makeText(Register.this, "Lengkapi form diatas!", Toast.LENGTH_LONG).show();
         }else if(!cekEmail(cekEmail)){
             Toast.makeText(Register.this, "Format email salah!", Toast.LENGTH_LONG).show();
-        }else{
+        }else if(Pass.length()<6){
+            Toast.makeText(Register.this, "Maaf, Anda memasukkan password kurang dari 6 karakter.", Toast.LENGTH_LONG).show();
+        }else if(!Pass.equals(Re_Pass)){
+            Toast.makeText(Register.this, "Password tidak cocok!", Toast.LENGTH_LONG).show();
+        } else{
             progress.setMessage("Sedang mendaftar...!");
             progress.show();
             otentikasi.createUserWithEmailAndPassword(Email, Pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -77,7 +81,6 @@ public class Register extends AppCompatActivity {
                         idRef.child("Nama").setValue(Nama);
                         idRef.child("Email").setValue(Email);
                         idRef.child("Wa").setValue(Wa);
-                        FirebaseAuth.getInstance().signOut();
                         progress.dismiss();
                         /*
                         builder_.setMessage("Anda telah berhasil login.\nLogin sekarang ?")

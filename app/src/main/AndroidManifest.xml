@@ -28,7 +28,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Login_Register.Register" />
+        <activity android:name=".Login_Register.Register" android:label="Daftar Akun"/>
         <activity android:name=".Edit_Profile"
             android:label="Ubah Profile"></activity>
     </application>
