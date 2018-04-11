@@ -18,16 +18,19 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-       <!-- <activity android:name=".Login_Register.Login" /> -->
+        <!-- <activity android:name=".Login_Register.Login" /> -->
         <activity
             android:name=".Login_Register.Login"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Login_Register.Register"></activity>
+        <activity android:name=".Login_Register.Register" android:label="Daftar Akun"/>
+        <activity android:name=".Edit_Profile"
+            android:label="Ubah Profile"></activity>
     </application>
 
 </manifest>

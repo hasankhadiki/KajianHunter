@@ -64,7 +64,11 @@ public class Register extends AppCompatActivity {
             Toast.makeText(Register.this, "Lengkapi form diatas!", Toast.LENGTH_LONG).show();
         }else if(!cekEmail(cekEmail)){
             Toast.makeText(Register.this, "Format email salah!", Toast.LENGTH_LONG).show();
-        }else{
+        }else if(Pass.length()<6){
+            Toast.makeText(Register.this, "Maaf, Anda memasukkan password kurang dari 6 karakter.", Toast.LENGTH_LONG).show();
+        }else if(!Pass.equals(Re_Pass)){
+            Toast.makeText(Register.this, "Password tidak cocok!", Toast.LENGTH_LONG).show();
+        } else{
             progress.setMessage("Sedang mendaftar...!");
             progress.show();
             otentikasi.createUserWithEmailAndPassword(Email, Pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -73,12 +77,12 @@ public class Register extends AppCompatActivity {
                     if(task.isSuccessful()){
                         AlertDialog.Builder builder_ = new AlertDialog.Builder(Register.this);
                         String id_user = otentikasi.getCurrentUser().getUid();
-                        DatabaseReference current_user =  database.child(id_user);
-                        current_user.child("Nama").setValue(Nama);
-                        current_user.child("Email").setValue(Email);
-                        current_user.child("Wa").setValue(Wa);
-                        FirebaseAuth.getInstance().signOut();
+                        DatabaseReference idRef =  database.child(id_user);
+                        idRef.child("Nama").setValue(Nama);
+                        idRef.child("Email").setValue(Email);
+                        idRef.child("Wa").setValue(Wa);
                         progress.dismiss();
+                        /*
                         builder_.setMessage("Anda telah berhasil login.\nLogin sekarang ?")
                                 .setCancelable(false)
                                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -91,7 +95,7 @@ public class Register extends AppCompatActivity {
                                 });
                         AlertDialog alert = builder_.create();
                         alert.setTitle("Selamat !");
-                        alert.show();
+                        alert.show();*/
                     }else {
                         progress.dismiss();
                         Toast.makeText(Register.this, "Register gagal!", Toast.LENGTH_LONG).show();

@@ -21,6 +21,8 @@
             android:layout_marginBottom="15dp"
             android:ems="10"
             android:hint="Nama"
+            android:inputType="text"
+            android:background="@drawable/edit_text"
             android:padding="5dp" />
         <EditText
             android:id="@+id/email_reg"
@@ -30,6 +32,7 @@
             android:ems="10"
             android:hint="Email"
             android:inputType="textEmailAddress"
+            android:background="@drawable/edit_text"
             android:padding="5dp" />
 
         <EditText
@@ -39,7 +42,8 @@
             android:layout_marginBottom="15dp"
             android:ems="10"
             android:hint="Wa"
-            android:inputType="textEmailAddress"
+            android:inputType="number"
+            android:background="@drawable/edit_text"
             android:padding="5dp" />
 
         <EditText
@@ -49,7 +53,8 @@
             android:layout_marginBottom="15dp"
             android:ems="10"
             android:hint="Password"
-            android:inputType="textEmailAddress"
+            android:inputType="textPassword"
+            android:background="@drawable/edit_text"
             android:padding="5dp" />
 
         <EditText
@@ -59,7 +64,8 @@
             android:layout_marginBottom="15dp"
             android:ems="10"
             android:hint="Masukkan kembali password"
-            android:inputType="textEmailAddress"
+            android:inputType="textPassword"
+            android:background="@drawable/edit_text"
             android:padding="5dp" />
 
         <Button
@@ -67,6 +73,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:background="@drawable/button"
+            android:textColor="@color/white"
             android:text="Daftar" />
 
     </LinearLayout>
