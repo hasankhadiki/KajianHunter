@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
 
@@ -42,13 +41,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         Fragment fragment = null;
 
         switch (item.getItemId()) {
-            case R.id.navigation_home:
+            case R.id.navigation_finding:
                 fragment = new FindingFragment();
                 break;
-            case R.id.navigation_dashboard:
+            case R.id.navigation_timeline:
                 fragment = new TimelineFragment();
                 break;
-            case R.id.navigation_notifications:
+            case R.id.navigation_profile:
                 fragment = new ProfileFragment();
                 break;
         }

@@ -11,16 +11,16 @@ import android.widget.TextView;
 public class MenuViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
 
-    public TextView txtNama, txtOrganisasi, txtKegiatan, txtJamMulai, txtJamAkhir;
+    public TextView txtNamaUstadz, txtTema, txtTempat, txtJamMulai, txtJamAkhir;
 
 
     private ItemClickListener itemClickListener;
     public MenuViewHolder(View itemView) {
         super(itemView);
 
-        txtNama = (TextView)itemView.findViewById(R.id.txt_namalengkap);
-        txtKegiatan = (TextView)itemView.findViewById(R.id.txt_kegiatan);
-        txtOrganisasi = (TextView)itemView.findViewById(R.id.txt_organisasi);
+        txtNamaUstadz = (TextView)itemView.findViewById(R.id.txt_namaustadz);
+        txtTempat = (TextView)itemView.findViewById(R.id.txt_tempat);
+        txtTema = (TextView)itemView.findViewById(R.id.txt_tema);
         txtJamMulai = (TextView)itemView.findViewById(R.id.txt_jammulai);
         txtJamAkhir = (TextView)itemView.findViewById(R.id.txt_jamakhir);
 

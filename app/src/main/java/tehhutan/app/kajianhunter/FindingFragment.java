@@ -1,9 +1,8 @@
 package tehhutan.app.kajianhunter;
 
-import android.content.Context;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,8 +10,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -27,6 +24,7 @@ public class FindingFragment extends Fragment {
 
     FirebaseDatabase database;
     DatabaseReference kajianlist;
+    FloatingActionButton fab;
 
     RecyclerView recyclerBookingList;
     RecyclerView.LayoutManager layoutManager;
@@ -35,7 +33,7 @@ public class FindingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setTitle("Finding");
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setHasOptionsMenu(true);
 
         database = FirebaseDatabase.getInstance();
@@ -49,17 +47,26 @@ public class FindingFragment extends Fragment {
         recyclerBookingList.setLayoutManager(layoutManager);
         loadKajianList();
 
-        return inflater.inflate(R.layout.fragment_finding, null);
+        fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadKajianList();
+            }
+        });
+
+        return view;
     }
 
 
+
     public void loadKajianList() {
-        FirebaseRecyclerAdapter<KajianList, MenuViewHolder> adapter = new FirebaseRecyclerAdapter<KajianList, MenuViewHolder>(KajianList.class, R.layout.fragment_finding, MenuViewHolder.class, kajianlist) {
+        FirebaseRecyclerAdapter<KajianList, MenuViewHolder> adapter = new FirebaseRecyclerAdapter<KajianList, MenuViewHolder>(KajianList.class, R.layout.finding_item, MenuViewHolder.class, kajianlist) {
             @Override
             protected void populateViewHolder(MenuViewHolder viewHolder, KajianList model, int position) {
-                viewHolder.txtNama.setText(model.getNama());
-                viewHolder.txtOrganisasi.setText(model.getDepartemen());
-                viewHolder.txtKegiatan.setText(model.getKegiatan());
+                viewHolder.txtNamaUstadz.setText(model.getNama());
+                viewHolder.txtTema.setText(model.getDepartemen());
+                viewHolder.txtTempat.setText(model.getKegiatan());
                 viewHolder.txtJamMulai.setText(model.getJamMulai());
                 viewHolder.txtJamAkhir.setText(model.getJamAkhir());
 
@@ -91,9 +98,4 @@ public class FindingFragment extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setCustomView(textView);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.blank_menu,menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
 }
