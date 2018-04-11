@@ -18,13 +18,16 @@ import android.widget.TextView;
 
 
 public class ProfileFragment extends Fragment {
+    private TextView nama, email, no_wa;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setTitle("Profile");
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setHasOptionsMenu(true);
-        return inflater.inflate(R.layout.fragment_profile, null);
+        View v = inflater.inflate(R.layout.fragment_profile, null);
+
+        return v;
     }
 
     public void setTitle(String title) {

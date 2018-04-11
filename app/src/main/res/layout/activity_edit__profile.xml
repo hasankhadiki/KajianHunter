@@ -1,21 +1,42 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="tehhutan.app.kajianhunter.ProfileFragment">
+    tools:context="tehhutan.app.kajianhunter.Edit_Profile">
+
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="15dp">
-        <TextView
-            android:id="@+id/nama_profile"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nama Profile"
-            android:textSize="40sp"
-            android:layout_marginBottom="10dp"/>
-        
+            android:paddingTop="10dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="120sp"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:text="Nama"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=": "
+                android:textSize="20sp"/>
+
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/nama_edit_profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text"
+            android:padding="5dp"
+            android:hint="nama"/>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -31,14 +52,17 @@
                 android:layout_height="wrap_content"
                 android:text=": "
                 android:textSize="20sp"/>
-            <TextView
-                android:id="@+id/data_WA"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:text="isi............."/>
-            
+
         </LinearLayout>
+
+        <EditText
+            android:id="@+id/wa_edit_profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text"
+            android:padding="5dp"
+            android:hint="email"
+            android:inputType="textEmailAddress"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -55,36 +79,27 @@
                 android:layout_height="wrap_content"
                 android:text=": "
                 android:textSize="20sp"/>
-            <TextView
-                android:id="@+id/data_WA"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:text="isi............."/>
+
 
         </LinearLayout>
-        <LinearLayout
+        <EditText
+            android:id="@+id/_edit_profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="wa"
+            android:padding="5dp"
+            android:background="@drawable/edit_text"
+            android:inputType="number"/>
+        <Button
+            android:background="@drawable/button"
+            android:padding="5dp"
+            android:layout_marginTop="15dp"
+            android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="120sp"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:text="Whatsapp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=": "
-                android:textSize="20sp"/>
-            <TextView
-                android:id="@+id/data_WA"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:text="isi............."/>
+            android:text="Simpan Perubahan"
+            android:textColor="@color/white"/>
 
-        </LinearLayout>
     </LinearLayout>
-</FrameLayout>
+
+</android.support.constraint.ConstraintLayout>
