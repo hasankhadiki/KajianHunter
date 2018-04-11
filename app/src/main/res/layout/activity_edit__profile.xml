@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/edit_text"
             android:padding="5dp"
-            android:hint="nama"/>
+            android:text="nama"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/edit_text"
             android:padding="5dp"
-            android:hint="email"
+            android:text="email"
             android:inputType="textEmailAddress"/>
 
         <LinearLayout
@@ -86,7 +86,7 @@
             android:id="@+id/wa_edit_profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="wa"
+            android:text="wa"
             android:padding="5dp"
             android:background="@drawable/edit_text"
             android:inputType="number"/>
@@ -113,7 +113,7 @@
             android:id="@+id/biodata_edit_profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="silahkan isi biodata!"
+            android:text="silahkan isi biodata!"
             android:padding="5dp"
             android:background="@drawable/edit_text"
             android:inputType="text"/>

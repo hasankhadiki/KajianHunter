@@ -29,12 +29,15 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Map;
 
+import tehhutan.app.kajianhunter.Login_Register.Login;
+
 
 public class ProfileFragment extends Fragment {
     private TextView nama, email, no_wa, biodata;
     private Button edit_profile;
+    private LinearLayout logout;
     private String idUser;
-    private ProgressDialog progress;
+    private ProgressDialog progress, progress1;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -43,14 +46,30 @@ public class ProfileFragment extends Fragment {
         setHasOptionsMenu(true);
         View v = inflater.inflate(R.layout.fragment_profile, null);
         progress = new ProgressDialog(getActivity());
+        progress1 = new ProgressDialog(getActivity());
         idUser = FirebaseAuth.getInstance().getUid();
         nama = (TextView)v.findViewById(R.id.nama_profile);
         email = (TextView)v.findViewById(R.id.email_profile);
         no_wa = (TextView)v.findViewById(R.id.wa_profile);
         biodata = (TextView)v.findViewById(R.id.biodata_profile);
         edit_profile = (Button)v.findViewById(R.id.edit_profile);
+        logout = (LinearLayout)v.findViewById(R.id.log_out);
         progress.setMessage("Memuat...");
         progress.show();
+
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progress1.setMessage("Sedang keluar...");
+                progress1.show();
+                FirebaseAuth.getInstance().signOut();
+                progress1.dismiss();
+                Intent intent = new Intent(getActivity(), Login.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+        });
+
         edit_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

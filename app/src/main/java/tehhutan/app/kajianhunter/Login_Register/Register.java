@@ -79,6 +79,7 @@ public class Register extends AppCompatActivity {
                         idRef.child("Wa").setValue(Wa);
                         FirebaseAuth.getInstance().signOut();
                         progress.dismiss();
+                        /*
                         builder_.setMessage("Anda telah berhasil login.\nLogin sekarang ?")
                                 .setCancelable(false)
                                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -91,7 +92,7 @@ public class Register extends AppCompatActivity {
                                 });
                         AlertDialog alert = builder_.create();
                         alert.setTitle("Selamat !");
-                        alert.show();
+                        alert.show();*/
                     }else {
                         progress.dismiss();
                         Toast.makeText(Register.this, "Register gagal!", Toast.LENGTH_LONG).show();

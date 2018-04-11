@@ -8,11 +8,33 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="15dp">
+
+        <LinearLayout
+            android:id="@+id/log_out"
+            android:layout_gravity="right"
+            android:padding="5dp"
+            android:clickable="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/button">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Keluar "
+                android:textSize="17sp"
+                android:textColor="@color/white"/>
+            <ImageView
+                android:layout_marginTop="4sp"
+                android:layout_width="17sp"
+                android:layout_height="17sp"
+                android:src="@drawable/ic_logout"/>
+        </LinearLayout>
         <TextView
             android:id="@+id/nama"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nama Profile"
+            android:text="Data Profile"
             android:textSize="40sp"
             android:layout_marginBottom="10dp"/>
         

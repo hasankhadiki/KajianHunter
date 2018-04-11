@@ -1,12 +1,14 @@
 package tehhutan.app.kajianhunter;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -53,7 +55,10 @@ public class Edit_Profile extends AppCompatActivity {
                     idRef.child("Biodata").setValue(Biodata);
                 }
                 progress.dismiss();
-                Edit_Profile.super.onBackPressed();
+                Toast.makeText(Edit_Profile.this, "Profile tersimpan!", Toast.LENGTH_LONG).show();
+                Intent i = new Intent(Edit_Profile.this, MainActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
 
             }
         });
