@@ -92,6 +92,7 @@ public class FindingFragment extends Fragment {
                 editJamAkhir = (EditText) mainRef.kajianDialog.findViewById(R.id.et_jamakhir);
                 btnSubmit = (Button) mainRef.kajianDialog.findViewById(R.id.btn_submit);
                 pickPlace = (ImageView) mainRef.kajianDialog.findViewById(R.id.pickPlace);
+                pickPlace.bringToFront();
 
                 isPlaceButtonClicked = false;
                 final String mGroupId = addKajian.push().getKey();
