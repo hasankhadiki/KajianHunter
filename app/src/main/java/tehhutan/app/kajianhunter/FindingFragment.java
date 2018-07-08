@@ -35,8 +35,11 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 
@@ -57,7 +60,10 @@ public class FindingFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
 
     private MainActivity mainRef;
+    private double latitude = 0.0;
+    private double longtitude = 0.0;
     private final int PLACE_PICKER_REQUEST = 442;
+    private boolean isPlaceButtonClicked = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,11 +78,11 @@ public class FindingFragment extends Fragment {
         addKajian = database.getReference("KajianList/Unverified");
         View view = inflater.inflate(R.layout.fragment_finding, container, false);
 
+
         FloatingActionButton fab = (FloatingActionButton)view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
                 mainRef.kajianDialog = getLayoutInflater().inflate(R.layout.add_booking, null);
                 editNamaPeminjam = (EditText) mainRef.kajianDialog.findViewById(R.id.et_namapeminjam);
@@ -87,6 +93,8 @@ public class FindingFragment extends Fragment {
                 btnSubmit = (Button) mainRef.kajianDialog.findViewById(R.id.btn_submit);
                 pickPlace = (ImageView) mainRef.kajianDialog.findViewById(R.id.pickPlace);
 
+                isPlaceButtonClicked = false;
+                final String mGroupId = addKajian.push().getKey();
 
                 mBuilder.setView(mainRef.kajianDialog);
                 final AlertDialog dialog = mBuilder.create();
@@ -96,6 +104,7 @@ public class FindingFragment extends Fragment {
                 pickPlace.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        isPlaceButtonClicked = true;
                         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();;
                         Intent intent;
                         try {
@@ -176,10 +185,8 @@ public class FindingFragment extends Fragment {
                     public void onClick(View view) {
                         ConnectivityManager connectivity = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
                         NetworkInfo activeNetwork = connectivity.getActiveNetworkInfo();
-                        if(mainRef.plcLatitude==86.0
-                                || mainRef.plcLongtitude==181.0
-                                ){
-                            Toast.makeText(getActivity(), "Silahkan ambil lokasi dengan menekan tombol lokasi!", Toast.LENGTH_SHORT).show();
+                        if(!isPlaceButtonClicked){
+                            Toast.makeText(getActivity(), "Silahkan ambil lokasi dengan menekan ikon lokasi!", Toast.LENGTH_SHORT).show();
                         }  else
                         if (activeNetwork != null) { // connected to the internet
                             if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
@@ -190,7 +197,10 @@ public class FindingFragment extends Fragment {
                                         , editJamMulai.getText().toString()
                                         , editJamAkhir.getText().toString()
                                 );
-                                addKajian.push().setValue(newBooking);
+                                addKajian.child(mGroupId).setValue(newBooking);
+                                addKajian.child(mGroupId).child("koordinatTempat").child("latitude").setValue(mainRef.plcLatitude);
+                                addKajian.child(mGroupId).child("koordinatTempat").child("longtitude").setValue(mainRef.plcLongtitude);
+                                Toast.makeText(getActivity(), "Kajian akan ditampilkan jika disetujui!", Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();
                             } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
                                 // connected to the mobile provider's data plan
@@ -200,7 +210,10 @@ public class FindingFragment extends Fragment {
                                         , editJamMulai.getText().toString()
                                         , editJamAkhir.getText().toString()
                                 );
-                                addKajian.push().setValue(newBooking);
+                                addKajian.child(mGroupId).setValue(newBooking);
+                                addKajian.child(mGroupId).child("koordinatTempat").child("latitude").setValue(mainRef.plcLatitude);
+                                addKajian.child(mGroupId).child("koordinatTempat").child("longtitude").setValue(mainRef.plcLongtitude);
+                                Toast.makeText(getActivity(), "Kajian akan ditampilkan jika disetujui!", Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();
                             }
                         } else {
@@ -257,12 +270,27 @@ public class FindingFragment extends Fragment {
                 viewHolder.txtTempat.setText(model.getKegiatan());
                 viewHolder.txtJamMulai.setText(model.getJamMulai());
                 viewHolder.txtJamAkhir.setText(model.getJamAkhir());
+                DatabaseReference postRef= getRef(position);
+                String postKey = postRef.getKey();
+                postRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        latitude = dataSnapshot.child("koordinatTempat").child("latitude").getValue(Double.class);
+                        longtitude = dataSnapshot.child("koordinatTempat").child("longtitude").getValue(Double.class);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
 
                 final KajianList clickItem = model;
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
                     public void onCLick(View view, int position, boolean isLongClick) {
-                        String url = viewHolder.txtTempat.getText().toString();
+                        String url = "http://maps.google.com/maps?q=" + latitude + "," + longtitude;
+                        //String url = viewHolder.txtTempat.getText().toString();
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         intent.setData(Uri.parse(url));
                         startActivity(intent);
