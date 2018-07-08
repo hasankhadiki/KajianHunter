@@ -4,5 +4,5 @@
     android:layout_height="match_parent"
     tools:context="tehhutan.app.kajianhunter.TimelineFragment">
 
-
+    <include layout="@layout/timeline_item"></include>
 </FrameLayout>

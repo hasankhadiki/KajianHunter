@@ -17,16 +17,21 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import tehhutan.app.kajianhunter.MainActivity;
 import tehhutan.app.kajianhunter.R;
+import tehhutan.app.kajianhunter.model.User;
 
 public class Login extends AppCompatActivity {
 
     private EditText email, password;
     private Button loginBtn;
-    private TextView register;
+    //private TextView register;
     private FirebaseAuth otentikasi;
     private ProgressDialog progress;
     private FirebaseAuth.AuthStateListener otentikasiListener;
@@ -42,7 +47,7 @@ public class Login extends AppCompatActivity {
         email=(EditText)findViewById(R.id.email_login);
         password=(EditText)findViewById(R.id.pass_login);
         loginBtn=(Button)findViewById(R.id.btn_login);
-        register=(TextView) findViewById(R.id.register_login);
+       // register=(TextView) findViewById(R.id.register_login);
         otentikasiListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -55,15 +60,15 @@ public class Login extends AppCompatActivity {
 
         };
 
-        register.setOnClickListener(new View.OnClickListener() {
+       /* register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Login.this, Register.class);
                 startActivity(intent);
             }
 
-        });
-
+        }); */
+                    /*
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,6 +77,49 @@ public class Login extends AppCompatActivity {
                 }else {
                     loginVerify();
                 }
+            }
+        }); */
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference table_user = database.getReference("User/Regular");
+        loginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final ProgressDialog mDialog = new ProgressDialog(Login.this);
+                mDialog.setMessage("Tunggu sebentar..");
+                mDialog.show();
+
+                table_user.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        //Check account existence in db
+                        if(dataSnapshot.child(email.getText().toString()).exists()) {
+
+                            //Get user informastion
+                            mDialog.dismiss();
+                            User user = dataSnapshot.child(email.getText().toString()).getValue(User.class);
+                            if (user.getPassword().equals(password.getText().toString())) {
+//                              Toast.makeText(SignIn.this, "Berhasil Masuk", Toast.LENGTH_SHORT).show();
+                                Intent bookingIntent = new Intent(Login.this, MainActivity.class);
+                                startActivity(bookingIntent);
+                                finish();
+                            } else {
+                                Toast.makeText(Login.this, "Gagal Masuk", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        else
+                        {
+                            mDialog.dismiss();
+                            Toast.makeText(Login.this, "Data pengguna tidak ada di Database", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
             }
         });
     }

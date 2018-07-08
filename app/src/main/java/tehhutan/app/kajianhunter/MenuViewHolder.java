@@ -1,11 +1,10 @@
 package tehhutan.app.kajianhunter;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
+
+import tehhutan.app.kajianhunter.Interface.ItemClickListener;
 
 /**
  * Created by 5215100071 on 4/9/2018.

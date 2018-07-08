@@ -9,10 +9,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
+    public View kajianDialog;
+    public Double plcLatitude=86.0, plcLongtitude=181.0;
+    //public String locationUri="";
+    private final int PLACE_PICKER_REQUEST = 442;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,5 +84,22 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             }
         },3000);
         click_duaKali=true;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // Add your code here
+        //Toast.makeText(MainAct.this, "Fragment Got it: " + requestCode + ", " + resultCode, Toast.LENGTH_SHORT).show();
+        if (requestCode == PLACE_PICKER_REQUEST && resultCode == RESULT_OK) {
+            Place place = PlacePicker.getPlace(data, MainActivity.this);
+            String address = String.format("%s", place.getAddress());
+            EditText tempat = (EditText) kajianDialog.findViewById(R.id.et_deskripsikegiatan);
+            plcLatitude = place.getLatLng().latitude;
+            plcLongtitude = place.getLatLng().longitude;
+            //  locationUri = String.format("%s", String.valueOf(place.getWebsiteUri()));
+            //Toast.makeText(MainAct.this, "alamat " + address + "\nlatitude : " + String.valueOf(latitude) + "\nlongtitude : " + String.valueOf(longitude), Toast.LENGTH_LONG).show();
+            tempat.setText(address);
+        }
     }
 }

@@ -45,6 +45,7 @@ public class ProfileFragment extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setHasOptionsMenu(true);
         View v = inflater.inflate(R.layout.fragment_profile, null);
+        /*
         progress = new ProgressDialog(getActivity());
         progress1 = new ProgressDialog(getActivity());
         idUser = FirebaseAuth.getInstance().getUid();
@@ -103,6 +104,7 @@ public class ProfileFragment extends Fragment {
             public void onCancelled(DatabaseError databaseError) {}
 
         });
+        */
         return v;
     }
 
