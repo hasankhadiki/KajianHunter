@@ -2,27 +2,33 @@ package tehhutan.app.kajianhunter.model;
 
 import java.io.Serializable;
 
-/**
- * Created by brad on 2017/02/05.
- */
-
 public class Post implements Serializable {
     private User user;
     private String postText;
     private String postId;
+    private String postTitle;
     private long numLikes;
     private long numComments;
 
     public Post() {
     }
 
-    public Post(User user, String postText, String postId, long numLikes, long numComments) {
+    public Post(User user, String postText, String postId, long numLikes, long numComments, String posttitle) {
 
         this.user = user;
         this.postText = postText;
         this.postId = postId;
         this.numLikes = numLikes;
         this.numComments = numComments;
+        this.postTitle = posttitle;
+    }
+
+    public String getPostTitle() {
+        return postTitle;
+    }
+
+    public void setPostTitle(String postTitle) {
+        this.postTitle = postTitle;
     }
 
     public User getUser() {

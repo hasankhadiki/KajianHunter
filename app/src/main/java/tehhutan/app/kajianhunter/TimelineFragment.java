@@ -115,7 +115,7 @@ public class TimelineFragment extends Fragment {
                                             mProgressDialog.setIndeterminate(true);
                                             mProgressDialog.show();
                                             Post newPost = new Post();
-                                            newPost.setPostId(FirebaseUtils.getUid());
+                                            newPost.setPostId(postId);
                                             newPost.setNumComments(0);
                                             newPost.setNumLikes(0);
                                             newPost.setUser(user);
@@ -176,6 +176,7 @@ public class TimelineFragment extends Fragment {
                 viewHolder.setNumLikes(String.valueOf(model.getNumLikes()));
                 viewHolder.setUsername(model.getUser().getNama());
                 viewHolder.setPostText(model.getPostText());
+                viewHolder.setPostTitle(model.getPostTitle());
 
                 if(model.getUser().getPhoto()!=null){
                     Glide.with(getActivity())
@@ -314,37 +315,27 @@ public class TimelineFragment extends Fragment {
     }
 
     public static class PostHolder extends RecyclerView.ViewHolder {
-        ImageView photoProfilAdminPost, photoProfileKomentator;
-        TextView namaProfilAdmin, namaProfileKomentator;
+        ImageView photoProfilAdminPost;
+        TextView namaProfilAdmin;
         LinearLayout postLikeLayout;
         LinearLayout postCommentLayout;
-        RecyclerView kolomKomentar;
         RelativeLayout balasTombol;
-        RelativeLayout kirimKomentar;
-        EditText komentar;
-        ImageView tombolKirim;
         TextView jumlahLikes;
         TextView jumlahKomentar;
-        TextView isiPost, isiKomentar;
+        TextView isiPost, judulPost;
 
 
         public PostHolder(View v) {
             super(v);
             photoProfilAdminPost = (ImageView)v. findViewById(R.id.gambar_admin_timeline);
-            photoProfileKomentator = (ImageView)v. findViewById(R.id.gambar_komentator_timeline);
             namaProfilAdmin = (TextView) v.findViewById(R.id.nama_admin_timeline);
-            namaProfileKomentator = (TextView)v.findViewById(R.id.nama_komentator_timeline);
             postLikeLayout = (LinearLayout) v.findViewById(R.id.like_layout);
             postCommentLayout = (LinearLayout) v.findViewById(R.id.comment_layout);
             jumlahLikes = (TextView) v.findViewById(R.id.tv_likes);
             jumlahKomentar = (TextView) v.findViewById(R.id.tv_comments);
-            kolomKomentar = (RecyclerView) v.findViewById(R.id.kolom_komentar);
             balasTombol = (RelativeLayout) v.findViewById(R.id.balas_tombol);
-            kirimKomentar = (RelativeLayout) v.findViewById(R.id.kirim_komentar);
-            komentar = (EditText) v.findViewById(R.id.edittext_komentar_timeline);
-            tombolKirim = (ImageView) v.findViewById(R.id.kirim_tombol);
             isiPost = (TextView)v.findViewById(R.id.deskripsi_pengumuman_timeline);
-            isiKomentar = (TextView)v.findViewById(R.id.isi_komentator);
+            judulPost = (TextView)v.findViewById(R.id.judul_kajian_timeline);
         }
 
 
@@ -363,6 +354,10 @@ public class TimelineFragment extends Fragment {
 
         public void setPostText(String text) {
            isiPost.setText(text);
+        }
+
+        public void setPostTitle(String judul){
+            judulPost.setText(judul);
         }
 
     }

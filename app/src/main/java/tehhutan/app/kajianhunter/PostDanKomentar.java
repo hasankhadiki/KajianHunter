@@ -55,9 +55,11 @@ public class PostDanKomentar extends AppCompatActivity {
         TextView jumlahLikes = (TextView)findViewById(R.id.tv_likes);
         TextView jumlahKomentar = (TextView)findViewById(R.id.tv_comments);
         TextView isiPost = (TextView)findViewById(R.id.deskripsi_pengumuman_timeline);
+        TextView judulPost = (TextView)findViewById(R.id.judul_kajian_timeline);
 
         namaProfilAdmin.setText(mPost.getUser().getNama());
         isiPost.setText(mPost.getPostText());
+        judulPost.setText(mPost.getPostTitle());
         jumlahLikes.setText(String.valueOf(mPost.getNumLikes()));
         jumlahKomentar.setText(String.valueOf(mPost.getNumComments()));
 
