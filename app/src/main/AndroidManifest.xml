@@ -39,10 +39,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+<<<<<<< HEAD
         <activity android:name=".PostDanKomentar" />
         <activity
             android:name=".KajianDetails.KajianDescription"
             android:theme="@style/AppTheme.NoActionBar" />
+=======
+        <activity android:name=".PostDanKomentar"
+            android:theme="@style/AppThemeNoActionBar"></activity>
+>>>>>>> master
     </application>
 
 </manifest>

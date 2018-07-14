@@ -116,12 +116,12 @@ public class TimelineFragment extends Fragment {
                                             mProgressDialog.show();
                                             Post newPost = new Post();
                                             newPost.setPostId(postId);
-                                            newPost.setNumComments(0);
-                                            newPost.setNumLikes(0);
+                                            newPost.setJumlahComments(0);
+                                            newPost.setJumlahLikes(0);
                                             newPost.setUser(user);
                                             newPost.setPostText(isiPost.getText().toString());
                                             newPost.setPostTitle(judulPost.getText().toString());
-                                            kirimPost(postId, newPost);
+                                            kirimPost(postId, newPost, dialog);
                                         }
 
                                         @Override
@@ -142,7 +142,7 @@ public class TimelineFragment extends Fragment {
         return v;
     }
 
-    private void kirimPost(String postId, Post mPost){
+    private void kirimPost(String postId, Post mPost, final AlertDialog dialog){
         FirebaseUtils.getPostRef().child(postId)
                 .setValue(mPost);
         FirebaseUtils.getMyPostRef(getContext()).child(postId).setValue(true)
@@ -150,6 +150,7 @@ public class TimelineFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         mProgressDialog.dismiss();
+                        dialog.dismiss();
                     }
                 });
 
@@ -172,8 +173,8 @@ public class TimelineFragment extends Fragment {
         ) {
             @Override
             protected void populateViewHolder(final PostHolder viewHolder, final Post model, int position) {
-                viewHolder.setNumComments(String.valueOf(model.getNumComments()));
-                viewHolder.setNumLikes(String.valueOf(model.getNumLikes()));
+                viewHolder.setNumComments(String.valueOf(model.getJumlahComments()));
+                viewHolder.setNumLikes(String.valueOf(model.getJumlahLikes()));
                 viewHolder.setUsername(model.getUser().getNama());
                 viewHolder.setPostText(model.getPostText());
                 viewHolder.setPostTitle(model.getPostTitle());
@@ -224,7 +225,8 @@ public class TimelineFragment extends Fragment {
                                         @Override
                                         public Transaction.Result doTransaction(MutableData mutableData) {
                                             long num = (long) mutableData.getValue();
-                                            mutableData.setValue(num - 1);
+                                            if(num>0){
+                                                mutableData.setValue(num - 1);}
                                             return Transaction.success(mutableData);
                                         }
 

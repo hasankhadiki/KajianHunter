@@ -2,6 +2,7 @@ package tehhutan.app.kajianhunter;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -47,42 +48,103 @@ public class PostDanKomentar extends AppCompatActivity {
         initPost();
         initCommentSection();
     }
+    private void bukaWA(Comment comment){
+        String linkWA_API = "https://api.whatsapp.com/send?phone=+62"+comment.getUser().getWa();
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(linkWA_API));
+        startActivity(i);
+    }
     private void initPost() {
         ImageView photoProfilAdminPost = (ImageView)findViewById(R.id.gambar_admin_timeline);
         TextView namaProfilAdmin = (TextView)findViewById(R.id.nama_admin_timeline);
         LinearLayout postLikeLayout = (LinearLayout)findViewById(R.id.like_layout);
         LinearLayout postCommentLayout = (LinearLayout)findViewById(R.id.comment_layout);
-        TextView jumlahLikes = (TextView)findViewById(R.id.tv_likes);
-        TextView jumlahKomentar = (TextView)findViewById(R.id.tv_comments);
+        final TextView jumlahLikes = (TextView)findViewById(R.id.tv_likes);
+        final TextView jumlahKomentar = (TextView)findViewById(R.id.tv_comments);
         TextView isiPost = (TextView)findViewById(R.id.deskripsi_pengumuman_timeline);
         TextView judulPost = (TextView)findViewById(R.id.judul_kajian_timeline);
 
         namaProfilAdmin.setText(mPost.getUser().getNama());
         isiPost.setText(mPost.getPostText());
         judulPost.setText(mPost.getPostTitle());
-        jumlahLikes.setText(String.valueOf(mPost.getNumLikes()));
-        jumlahKomentar.setText(String.valueOf(mPost.getNumComments()));
+        FirebaseUtils.getPostRef().child(mPost.getPostId()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Post post = dataSnapshot.getValue(Post.class);
+                jumlahLikes.setText(String.valueOf(post.getJumlahLikes()));
+                jumlahKomentar.setText(String.valueOf(post.getJumlahComments()));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        postLikeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onLikeClick(mPost.getPostId());
+            }
+        });
 
         if(mPost.getUser().getPhoto()!=null){
             Glide.with(PostDanKomentar.this)
                     .load(mPost.getUser().getPhoto())
                     .into(photoProfilAdminPost);
         }
-
-        /*if (mPost.getPostImageUrl() != null) {
-            postDisplayImageView.setVisibility(View.VISIBLE);
-            StorageReference storageReference = FirebaseStorage.getInstance().getReference(mPost.getPostImageUrl());
-
-            Glide.with(PostActivity.this)
-                    .using(new FirebaseImageLoader())
-                    .load(storageReference)
-                    .into(postDisplayImageView);
-        } else {
-            postDisplayImageView.setImageBitmap(null);
-            postDisplayImageView.setVisibility(View.GONE);
-        }*/
     }
+    private void onLikeClick(final String postId) {
+        FirebaseUtils.getPostLikedRef(postId, PostDanKomentar.this)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.getValue() != null) {
+                            //User liked
+                            FirebaseUtils.getPostRef()
+                                    .child(postId)
+                                    .child(Constants.NUM_LIKES_KEY)
+                                    .runTransaction(new Transaction.Handler() {
+                                        @Override
+                                        public Transaction.Result doTransaction(MutableData mutableData) {
+                                            long num = (long) mutableData.getValue();
+                                            if(num>0){
+                                            mutableData.setValue(num - 1);}
+                                            return Transaction.success(mutableData);
+                                        }
 
+                                        @Override
+                                        public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                                            FirebaseUtils.getPostLikedRef(postId, PostDanKomentar.this)
+                                                    .setValue(null);
+                                        }
+                                    });
+                        } else {
+                            FirebaseUtils.getPostRef()
+                                    .child(postId)
+                                    .child(Constants.NUM_LIKES_KEY)
+                                    .runTransaction(new Transaction.Handler() {
+                                        @Override
+                                        public Transaction.Result doTransaction(MutableData mutableData) {
+                                            long num = (long) mutableData.getValue();
+                                            mutableData.setValue(num + 1);
+                                            return Transaction.success(mutableData);
+                                        }
+
+                                        @Override
+                                        public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                                            FirebaseUtils.getPostLikedRef(postId, PostDanKomentar.this)
+                                                    .setValue(true);
+                                        }
+                                    });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
     private void initCommentSection() {
         RecyclerView commentRecyclerView = (RecyclerView) findViewById(R.id.kolom_komentar);
         commentRecyclerView.setLayoutManager(new LinearLayoutManager(PostDanKomentar.this));
@@ -94,9 +156,18 @@ public class PostDanKomentar extends AppCompatActivity {
                 FirebaseUtils.getCommentRef(mPost.getPostId())
         ) {
             @Override
-            protected void populateViewHolder(CommentHolder viewHolder, Comment model, int position) {
+            protected void populateViewHolder(CommentHolder viewHolder, final Comment model, int position) {
                 viewHolder.setUsername(model.getUser().getNama());
                 viewHolder.setComment(model.getComment());
+                viewHolder.namaKomentator.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        bukaWA(model);
+                    }
+                });
+                if(!mPost.getUser().getWa().equals(model.getUser().getWa())){
+                    viewHolder.tandaTS.setVisibility(View.GONE);
+                }
                 if(model.getUser().getPhoto()!=null){
                     Glide.with(PostDanKomentar.this)
                             .load(model.getUser().getPhoto())
@@ -152,6 +223,7 @@ public class PostDanKomentar extends AppCompatActivity {
                                     @Override
                                     public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
                                         progressDialog.dismiss();
+                                        komentar.setText(null);
                                         FirebaseUtils.addToMyRecord(Constants.COMMENTS_KEY, uid, getApplication());
                                     }
                                 });
@@ -166,12 +238,14 @@ public class PostDanKomentar extends AppCompatActivity {
 
     public static class CommentHolder extends RecyclerView.ViewHolder {
         ImageView photoProfileKomentator;
+        ImageView tandaTS;
         TextView namaKomentator;
         TextView isiKomentar;
 
         public CommentHolder(View itemView) {
             super(itemView);
             photoProfileKomentator = (ImageView) itemView.findViewById(R.id.gambar_komentator_timeline);
+            tandaTS = (ImageView) itemView.findViewById(R.id.komentar_ts);
             namaKomentator = (TextView) itemView.findViewById(R.id.nama_komentator_timeline);
             isiKomentar = (TextView) itemView.findViewById(R.id.isi_komentator);
         }
