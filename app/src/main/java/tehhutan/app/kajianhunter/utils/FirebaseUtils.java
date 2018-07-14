@@ -52,7 +52,6 @@ public class FirebaseUtils {
     public static String getUserID(Context c){
         SharedPreferences prefs = c.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
         String id = prefs.getString("user", null);
-        Toast.makeText(c, id, Toast.LENGTH_SHORT).show();
         return  id;
     }
 
