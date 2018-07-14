@@ -30,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Map;
 
 import tehhutan.app.kajianhunter.Login_Register.Login;
+import tehhutan.app.kajianhunter.R;
 
 
 public class ProfileFragment extends Fragment {

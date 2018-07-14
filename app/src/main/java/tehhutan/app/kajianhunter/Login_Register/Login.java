@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,9 +28,11 @@ import tehhutan.app.kajianhunter.MainActivity;
 import tehhutan.app.kajianhunter.R;
 import tehhutan.app.kajianhunter.model.User;
 
+import static tehhutan.app.kajianhunter.utils.Constants.MY_PREFS_NAME;
+
 public class Login extends AppCompatActivity {
 
-    private EditText email, password;
+    private EditText wa, password;
     private Button loginBtn;
     //private TextView register;
     private FirebaseAuth otentikasi;
@@ -44,7 +47,7 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         progress = new ProgressDialog(this);
         otentikasi = FirebaseAuth.getInstance();
-        email=(EditText)findViewById(R.id.email_login);
+        wa=(EditText)findViewById(R.id.wa_login);
         password=(EditText)findViewById(R.id.pass_login);
         loginBtn=(Button)findViewById(R.id.btn_login);
        // register=(TextView) findViewById(R.id.register_login);
@@ -94,13 +97,17 @@ public class Login extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
                         //Check account existence in db
-                        if(dataSnapshot.child(email.getText().toString()).exists()) {
+                        if(dataSnapshot.child(wa.getText().toString()).exists()) {
 
                             //Get user informastion
                             mDialog.dismiss();
-                            User user = dataSnapshot.child(email.getText().toString()).getValue(User.class);
+                            User user = dataSnapshot.child(wa.getText().toString()).getValue(User.class);
                             if (user.getPassword().equals(password.getText().toString())) {
-//                              Toast.makeText(SignIn.this, "Berhasil Masuk", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Login.this, "Berhasil Masuk", Toast.LENGTH_SHORT).show();
+                                // untuk menyimpan id dalam aplikasi
+                                SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
+                                editor.putString("user", user.getWa());
+                                editor.apply();
                                 Intent bookingIntent = new Intent(Login.this, MainActivity.class);
                                 startActivity(bookingIntent);
                                 finish();
@@ -131,7 +138,7 @@ public class Login extends AppCompatActivity {
     }
 
     private void loginVerify(){
-        String Email=email.getText().toString();
+        String Email=wa.getText().toString();
         String Pass=password.getText().toString();
         progress.setMessage("Sedang masuk...!");
         progress.show();

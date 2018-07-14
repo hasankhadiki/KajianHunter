@@ -15,7 +15,7 @@
         android:layout_height="wrap_content">
 
         <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/email_login"
+            android:id="@+id/wa_login"
             android:hint="No. Telp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

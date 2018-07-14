@@ -9,15 +9,22 @@ public class User {
     private String Email;
     private String Nama;
     private String Password;
-
+    private String Photo;
     public User() {
     }
 
-
-    public User(String email, String nama, String password) {
+    public User(String email, String nama, String password, String photo) {
         Email = email;
         Nama = nama;
         Password = password;
+        Photo = photo;
+    }
+    public String getPhoto() {
+        return Photo;
+    }
+
+    public void setPhoto(String photo) {
+        Photo = photo;
     }
 
     public String getEmail() {

@@ -95,7 +95,7 @@ public class Register extends AppCompatActivity {
                         else
                         {
                             mDialog.dismiss();
-                            User user = new User(email.getText().toString(), nama.getText().toString(), password.getText().toString());
+                            User user = new User(email.getText().toString(), nama.getText().toString(), password.getText().toString(), null, no_wa.getText().toString());
                             table_user.child(no_wa.getText().toString()).setValue(user);
                             Toast.makeText(Register.this, "Pendaftaran akun baru berhasil", Toast.LENGTH_SHORT).show();
                             finish();

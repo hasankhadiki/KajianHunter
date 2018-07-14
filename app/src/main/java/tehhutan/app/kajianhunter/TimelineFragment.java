@@ -1,30 +1,264 @@
 package tehhutan.app.kajianhunter;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
-import android.net.Uri;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
+
+import tehhutan.app.kajianhunter.model.Comment;
+import tehhutan.app.kajianhunter.model.Post;
+import tehhutan.app.kajianhunter.model.User;
+import tehhutan.app.kajianhunter.utils.Constants;
+import tehhutan.app.kajianhunter.utils.FirebaseUtils;
 
 
 public class TimelineFragment extends Fragment {
+    private static final String BUNDLE_COMMENT = "comment";
+    private Post mPost;
+    private EditText komentar, isiPost, judulPost;
+    private Comment mComment;
+    private Button submitPost;
+    private FirebaseRecyclerAdapter<Post, PostHolder> mPostAdapter;
+    private RecyclerView daftarPost;
+    private ProgressDialog mProgressDialog;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setTitle("Timeline");
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setHasOptionsMenu(true);
-        return inflater.inflate(R.layout.fragment_timeline, null);
+        View v = inflater.inflate(R.layout.fragment_timeline, null);
+        /*FloatingActionButton fab = (FloatingActionButton) mRootVIew.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PostCreateDialog dialog = new PostCreateDialog();
+                dialog.show(getFragmentManager(), null);
+            }
+        }); */
+        initDaftarPost(v);
+        FloatingActionButton fab = (FloatingActionButton)v.findViewById(R.id.fab_timeline);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
+                View vv  = getLayoutInflater().inflate(R.layout.add_post_timeline, null);
+                judulPost = (EditText)  vv.findViewById(R.id.et_judulpost_timeline);
+                isiPost = (EditText)  vv.findViewById(R.id.et_isipost_timeline);
+                submitPost = (Button)  vv.findViewById(R.id.btn_submit_post);
+
+                mBuilder.setView( vv);
+                final AlertDialog dialog = mBuilder.create();
+                dialog.show();
+
+
+                // set listeners
+                judulPost.addTextChangedListener(mTextWatcher);
+                isiPost.addTextChangedListener(mTextWatcher);
+
+                // run once to disable if empty
+                checkFieldsForEmptyValues();
+
+                submitPost.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        ConnectivityManager connectivity = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                        NetworkInfo activeNetwork = connectivity.getActiveNetworkInfo();
+                        if (activeNetwork != null) { // connected to the internet
+                            FirebaseUtils.getUserRef(FirebaseUtils.getUserID(getContext()).replace(".", ","))
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            User user = dataSnapshot.getValue(User.class);
+                                            final String postId = FirebaseUtils.getUid();
+                                            //TextView postDialogTextView = (TextView) mRootView.findViewById(R.id.post_dialog_edittext);
+                                            //String text = postDialogTextView.getText().toString();
+                                            mProgressDialog = new ProgressDialog(getActivity());
+                                            mProgressDialog.setMessage("Mengirim post...");
+                                            mProgressDialog.setCancelable(false);
+                                            mProgressDialog.setIndeterminate(true);
+                                            mProgressDialog.show();
+                                            Post newPost = new Post();
+                                            newPost.setPostId(FirebaseUtils.getUid());
+                                            newPost.setNumComments(0);
+                                            newPost.setNumLikes(0);
+                                            newPost.setUser(user);
+                                            newPost.setPostText(isiPost.getText().toString());
+                                            newPost.setPostTitle(judulPost.getText().toString());
+                                            kirimPost(postId, newPost);
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+                                            mProgressDialog.dismiss();
+                                        }
+                                    });
+
+                        } else {
+                            Toast.makeText(getActivity(), "Internet Connection Not Available, Please Check Your Connection Setting", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+
+
+        });
+        return v;
+    }
+
+    private void kirimPost(String postId, Post mPost){
+        FirebaseUtils.getPostRef().child(postId)
+                .setValue(mPost);
+        FirebaseUtils.getMyPostRef(getContext()).child(postId).setValue(true)
+                .addOnCompleteListener(getActivity(), new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        mProgressDialog.dismiss();
+                    }
+                });
+
+        FirebaseUtils.addToMyRecord(Constants.POST_KEY, postId, getContext());
+    }
+
+    private void initDaftarPost(View v) {
+        daftarPost = (RecyclerView) v.findViewById(R.id.daftarPost);
+        daftarPost.setLayoutManager(new LinearLayoutManager(getContext()));
+        setupAdapter();
+        daftarPost.setAdapter(mPostAdapter);
+    }
+
+    private void setupAdapter() {
+        mPostAdapter = new FirebaseRecyclerAdapter<Post, PostHolder>(
+                Post.class,
+                R.layout.timeline_item,
+                PostHolder.class,
+                FirebaseUtils.getPostRef()
+        ) {
+            @Override
+            protected void populateViewHolder(final PostHolder viewHolder, final Post model, int position) {
+                viewHolder.setNumComments(String.valueOf(model.getNumComments()));
+                viewHolder.setNumLikes(String.valueOf(model.getNumLikes()));
+                viewHolder.setUsername(model.getUser().getNama());
+                viewHolder.setPostText(model.getPostText());
+
+                if(model.getUser().getPhoto()!=null){
+                    Glide.with(getActivity())
+                            .load(model.getUser().getPhoto())
+                            .into(viewHolder.photoProfilAdminPost);
+                }
+                viewHolder.postLikeLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onLikeClick(model.getPostId());
+                    }
+                });
+
+                viewHolder.postCommentLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getContext(), PostDanKomentar.class);
+                        intent.putExtra(Constants.EXTRA_POST, model);
+                        startActivity(intent);
+                    }
+                });
+                viewHolder.balasTombol.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getContext(), PostDanKomentar.class);
+                        intent.putExtra(Constants.EXTRA_POST, model);
+                        startActivity(intent);
+                    }
+                });
+            }
+        };
+    }
+
+    private void onLikeClick(final String postId) {
+        FirebaseUtils.getPostLikedRef(postId, getContext())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.getValue() != null) {
+                            //User liked
+                            FirebaseUtils.getPostRef()
+                                    .child(postId)
+                                    .child(Constants.NUM_LIKES_KEY)
+                                    .runTransaction(new Transaction.Handler() {
+                                        @Override
+                                        public Transaction.Result doTransaction(MutableData mutableData) {
+                                            long num = (long) mutableData.getValue();
+                                            mutableData.setValue(num - 1);
+                                            return Transaction.success(mutableData);
+                                        }
+
+                                        @Override
+                                        public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                                            FirebaseUtils.getPostLikedRef(postId, getContext())
+                                                    .setValue(null);
+                                        }
+                                    });
+                        } else {
+                            FirebaseUtils.getPostRef()
+                                    .child(postId)
+                                    .child(Constants.NUM_LIKES_KEY)
+                                    .runTransaction(new Transaction.Handler() {
+                                        @Override
+                                        public Transaction.Result doTransaction(MutableData mutableData) {
+                                            long num = (long) mutableData.getValue();
+                                            mutableData.setValue(num + 1);
+                                            return Transaction.success(mutableData);
+                                        }
+
+                                        @Override
+                                        public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                                            FirebaseUtils.getPostLikedRef(postId, getContext())
+                                                    .setValue(true);
+                                        }
+                                    });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     public void setTitle(String title) {
@@ -43,4 +277,93 @@ public class TimelineFragment extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setCustomView(textView);
     }
 
+    private TextWatcher mTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            // check Fields For Empty Values
+            checkFieldsForEmptyValues();
+        }
+    };
+
+    void checkFieldsForEmptyValues(){
+
+        String s1 = judulPost.getText().toString();
+        String s2 = isiPost.getText().toString();
+
+        if(s1.equals("")
+                || s2.equals("")
+                ){
+            submitPost.setEnabled(false);
+        } else {
+            submitPost.setEnabled(true);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putSerializable(BUNDLE_COMMENT, mComment);
+        super.onSaveInstanceState(outState);
+    }
+
+    public static class PostHolder extends RecyclerView.ViewHolder {
+        ImageView photoProfilAdminPost, photoProfileKomentator;
+        TextView namaProfilAdmin, namaProfileKomentator;
+        LinearLayout postLikeLayout;
+        LinearLayout postCommentLayout;
+        RecyclerView kolomKomentar;
+        RelativeLayout balasTombol;
+        RelativeLayout kirimKomentar;
+        EditText komentar;
+        ImageView tombolKirim;
+        TextView jumlahLikes;
+        TextView jumlahKomentar;
+        TextView isiPost, isiKomentar;
+
+
+        public PostHolder(View v) {
+            super(v);
+            photoProfilAdminPost = (ImageView)v. findViewById(R.id.gambar_admin_timeline);
+            photoProfileKomentator = (ImageView)v. findViewById(R.id.gambar_komentator_timeline);
+            namaProfilAdmin = (TextView) v.findViewById(R.id.nama_admin_timeline);
+            namaProfileKomentator = (TextView)v.findViewById(R.id.nama_komentator_timeline);
+            postLikeLayout = (LinearLayout) v.findViewById(R.id.like_layout);
+            postCommentLayout = (LinearLayout) v.findViewById(R.id.comment_layout);
+            jumlahLikes = (TextView) v.findViewById(R.id.tv_likes);
+            jumlahKomentar = (TextView) v.findViewById(R.id.tv_comments);
+            kolomKomentar = (RecyclerView) v.findViewById(R.id.kolom_komentar);
+            balasTombol = (RelativeLayout) v.findViewById(R.id.balas_tombol);
+            kirimKomentar = (RelativeLayout) v.findViewById(R.id.kirim_komentar);
+            komentar = (EditText) v.findViewById(R.id.edittext_komentar_timeline);
+            tombolKirim = (ImageView) v.findViewById(R.id.kirim_tombol);
+            isiPost = (TextView)v.findViewById(R.id.deskripsi_pengumuman_timeline);
+            isiKomentar = (TextView)v.findViewById(R.id.isi_komentator);
+        }
+
+
+
+        public void setUsername(String username) {
+            namaProfilAdmin.setText(username);
+        }
+
+        public void setNumLikes(String numLikes) {
+            jumlahLikes.setText(numLikes);
+        }
+
+        public void setNumComments(String numComments) {
+            jumlahKomentar.setText(numComments);
+        }
+
+        public void setPostText(String text) {
+           isiPost.setText(text);
+        }
+
+    }
 }
