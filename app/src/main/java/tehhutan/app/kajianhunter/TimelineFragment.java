@@ -116,8 +116,8 @@ public class TimelineFragment extends Fragment {
                                             mProgressDialog.show();
                                             Post newPost = new Post();
                                             newPost.setPostId(postId);
-                                            newPost.setNumComments(0);
-                                            newPost.setNumLikes(0);
+                                            newPost.setJumlahComments(0);
+                                            newPost.setJumlahLikes(0);
                                             newPost.setUser(user);
                                             newPost.setPostText(isiPost.getText().toString());
                                             newPost.setPostTitle(judulPost.getText().toString());
@@ -173,8 +173,8 @@ public class TimelineFragment extends Fragment {
         ) {
             @Override
             protected void populateViewHolder(final PostHolder viewHolder, final Post model, int position) {
-                viewHolder.setNumComments(String.valueOf(model.getNumComments()));
-                viewHolder.setNumLikes(String.valueOf(model.getNumLikes()));
+                viewHolder.setNumComments(String.valueOf(model.getJumlahComments()));
+                viewHolder.setNumLikes(String.valueOf(model.getJumlahLikes()));
                 viewHolder.setUsername(model.getUser().getNama());
                 viewHolder.setPostText(model.getPostText());
                 viewHolder.setPostTitle(model.getPostTitle());

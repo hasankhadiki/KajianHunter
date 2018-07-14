@@ -71,8 +71,8 @@ public class PostDanKomentar extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Post post = dataSnapshot.getValue(Post.class);
-                jumlahLikes.setText(String.valueOf(post.getNumLikes()));
-                jumlahKomentar.setText(String.valueOf(post.getNumComments()));
+                jumlahLikes.setText(String.valueOf(post.getJumlahLikes()));
+                jumlahKomentar.setText(String.valueOf(post.getJumlahComments()));
             }
 
             @Override

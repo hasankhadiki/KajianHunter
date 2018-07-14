@@ -7,19 +7,19 @@ public class Post implements Serializable {
     private String postText;
     private String postId;
     private String postTitle;
-    private long numLikes;
-    private long numComments;
+    private long jumlahLikes;
+    private long jumlahComments;
 
     public Post() {
     }
 
-    public Post(User user, String postText, String postId, long numLikes, long numComments, String posttitle) {
+    public Post(User user, String postText, String postId, long jumlahLikes, long jumlahComments, String posttitle) {
 
         this.user = user;
         this.postText = postText;
         this.postId = postId;
-        this.numLikes = numLikes;
-        this.numComments = numComments;
+        this.jumlahLikes = jumlahLikes;
+        this.jumlahComments = jumlahComments;
         this.postTitle = posttitle;
     }
 
@@ -57,20 +57,20 @@ public class Post implements Serializable {
         this.postId = postId;
     }
 
-    public long getNumLikes() {
-        return numLikes;
+    public long getJumlahLikes() {
+        return jumlahLikes;
     }
 
-    public void setNumLikes(long numLikes) {
-        this.numLikes = numLikes;
+    public void setJumlahLikes(long jumlahLikes) {
+        this.jumlahLikes = jumlahLikes;
     }
 
-    public long getNumComments() {
-        return numComments;
+    public long getJumlahComments() {
+        return jumlahComments;
     }
 
-    public void setNumComments(long numComments) {
-        this.numComments = numComments;
+    public void setJumlahComments(long jumlahComments) {
+        this.jumlahComments = jumlahComments;
     }
 
 }
