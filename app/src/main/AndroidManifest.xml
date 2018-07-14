@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <!-- <activity android:name=".Login_Register.Login" /> -->
-        <activity android:name=".Login_Register.Login"></activity>
+        <activity android:name=".Login_Register.Login" />
         <activity
             android:name=".Login_Register.Register"
             android:label="Daftar Akun" />
@@ -39,7 +39,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PostDanKomentar"></activity>
+        <activity android:name=".PostDanKomentar" />
+        <activity
+            android:name=".KajianDetails.KajianDescription"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

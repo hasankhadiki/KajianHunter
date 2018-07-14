@@ -7,4 +7,6 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="api_key">AIzaSyDENIQhcWz79PaZu7eTQeeSHmfmxRtBHtg</string>
+    <string name="kajian_desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc blandit eros vitae luctus consequat. Aliquam feugiat dictum lorem. Quisque ligula leo, elementum non odio non, semper sagittis ante. Phasellus congue lobortis dictum. Nullam blandit massa vel lectus molestie scelerisque. Nulla varius sapien quis ipsum fringilla ornare. Donec vehicula dictum nisl tincidunt egestas. Nullam congue enim eu velit placerat, in dapibus ligula rutrum. Mauris volutpat ante sollicitudin eros eleifend, nec maximus nulla luctus. Morbi quis vulputate est, in sollicitudin neque. In ac sodales eros, nec pulvinar orci.</string>
+
 </resources>

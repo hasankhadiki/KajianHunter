@@ -1,13 +1,11 @@
 package tehhutan.app.kajianhunter;
 
-import android.app.Activity;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -33,7 +31,6 @@ import android.widget.Toast;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -44,10 +41,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Calendar;
 
 import tehhutan.app.kajianhunter.Interface.ItemClickListener;
-import tehhutan.app.kajianhunter.KajianList;
-import tehhutan.app.kajianhunter.MainActivity;
-import tehhutan.app.kajianhunter.MenuViewHolder;
-import tehhutan.app.kajianhunter.R;
+import tehhutan.app.kajianhunter.KajianDetails.KajianDescription;
 import tehhutan.app.kajianhunter.model.BookingList;
 
 
@@ -75,13 +69,14 @@ public class FindingFragment extends Fragment {
         setTitle("Finding");
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setHasOptionsMenu(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(0);
+
 
         mainRef = (MainActivity)getActivity();
         database = FirebaseDatabase.getInstance();
         kajianlist = database.getReference("KajianList/Verified");
         addKajian = database.getReference("KajianList/Unverified");
         View view = inflater.inflate(R.layout.fragment_finding, container, false);
-
 
         FloatingActionButton fab = (FloatingActionButton)view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -269,7 +264,7 @@ public class FindingFragment extends Fragment {
     public void loadKajianList() {
         FirebaseRecyclerAdapter<KajianList, MenuViewHolder> adapter = new FirebaseRecyclerAdapter<KajianList, MenuViewHolder>(KajianList.class, R.layout.finding_item, MenuViewHolder.class, kajianlist) {
             @Override
-            protected void populateViewHolder(final MenuViewHolder viewHolder, KajianList model, int position) {
+            protected void populateViewHolder(final MenuViewHolder viewHolder, final KajianList model, int position) {
                 viewHolder.txtNamaUstadz.setText(model.getNama());
                 viewHolder.txtTema.setText(model.getDepartemen());
                 viewHolder.txtTempat.setText(model.getKegiatan());
@@ -294,10 +289,22 @@ public class FindingFragment extends Fragment {
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
                     public void onCLick(View view, int position, boolean isLongClick) {
-                        String url = "http://maps.google.com/maps?q=" + latitude + "," + longtitude;
                         //String url = viewHolder.txtTempat.getText().toString();
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse(url));
+//                        Intent intent = new Intent(Intent.ACTION_VIEW);
+//                        intent.setData(Uri.parse(url));
+                        Intent intent = new Intent(getActivity(), KajianDescription.class);
+                        Bundle bundle = new Bundle();
+                        String url = "http://maps.google.com/maps?q=" + latitude + "," + longtitude;
+                        String namaUst = model.getNama();
+                        String tema = model.getDepartemen();
+                        String deskripsi = model.getDeskripsi();
+                        String pict =  model.getPict();
+                        bundle.putString("namaUst",namaUst);
+                        bundle.putString("tema",tema);
+                        bundle.putString("deskripsi",deskripsi);
+                        bundle.putString("url",url);
+                        bundle.putString("pict",pict);
+                        intent.putExtras(bundle);
                         startActivity(intent);
 
                     }

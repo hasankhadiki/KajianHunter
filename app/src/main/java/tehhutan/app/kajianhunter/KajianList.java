@@ -10,17 +10,20 @@ public class KajianList {
     private String Nama;
     private String JamMulai;
     private String JamAkhir;
+    private String Deskripsi;
+    private String Pict;
 
     public KajianList() {
     }
 
-    public KajianList(String departemen,  String nama, String kegiatan, String jamMulai, String jamAkhir) {
-
+    public KajianList(String departemen, String kegiatan, String nama, String jamMulai, String jamAkhir, String deskripsi, String pict) {
         Departemen = departemen;
-        Nama = nama;
         Kegiatan = kegiatan;
+        Nama = nama;
         JamMulai = jamMulai;
         JamAkhir = jamAkhir;
+        Deskripsi = deskripsi;
+        Pict = pict;
     }
 
     public String getDepartemen() {
@@ -63,5 +66,19 @@ public class KajianList {
         JamAkhir = jamAkhir;
     }
 
+    public String getDeskripsi() {
+        return Deskripsi;
+    }
 
+    public void setDeskripsi(String deskripsi) {
+        Deskripsi = deskripsi;
+    }
+
+    public String getPict() {
+        return Pict;
+    }
+
+    public void setPict(String pict) {
+        Pict = pict;
+    }
 }
