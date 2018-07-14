@@ -31,6 +31,7 @@
                     android:id="@+id/nama_admin_timeline"
                     android:layout_width="65dp"
                     android:layout_height="wrap_content"
+                    android:textAlignment="center"
                     android:text="administrator"/>
             </LinearLayout>
             <LinearLayout

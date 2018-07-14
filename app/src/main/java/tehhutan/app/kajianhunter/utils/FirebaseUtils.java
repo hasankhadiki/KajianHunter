@@ -12,10 +12,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+
+import tehhutan.app.kajianhunter.model.User;
 
 import static android.content.Context.MODE_PRIVATE;
 import static tehhutan.app.kajianhunter.utils.Constants.MY_PREFS_NAME;
@@ -27,6 +30,7 @@ import static tehhutan.app.kajianhunter.utils.Constants.MY_PREFS_NAME;
 public class FirebaseUtils {
     //I'm creating this class for similar reasons as the Constants class, and to make my code a bit
     //cleaner and more well managed.
+    private static User currentUser;
 
     public static DatabaseReference getUserRef(String wa){
         return FirebaseDatabase.getInstance()
@@ -55,8 +59,19 @@ public class FirebaseUtils {
         return  id;
     }
 
-    public static FirebaseUser getCurrentUser(){
-        return FirebaseAuth.getInstance().getCurrentUser();
+    public static User getCurrentUser(Context c){
+        getUserRef(getUserID(c)).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                currentUser = dataSnapshot.getValue(User.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        return currentUser;
     }
 
     public static String getUid(){
