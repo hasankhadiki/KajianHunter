@@ -3,12 +3,14 @@ package tehhutan.app.kajianhunter;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -63,10 +65,45 @@ public class PostDanKomentar extends AppCompatActivity {
         final TextView jumlahKomentar = (TextView)findViewById(R.id.tv_comments);
         TextView isiPost = (TextView)findViewById(R.id.deskripsi_pengumuman_timeline);
         TextView judulPost = (TextView)findViewById(R.id.judul_kajian_timeline);
-
+        final ImageView likeButton = (ImageView)findViewById(R.id.iv_like);
+        cekLike(likeButton, mPost.getPostId());
         namaProfilAdmin.setText(mPost.getUser().getNama());
         isiPost.setText(mPost.getPostText());
         judulPost.setText(mPost.getPostTitle());
+        jumlahKomentar.setText(String.valueOf(mPost.getJumlahComments()));
+        jumlahLikes.setText(String.valueOf(mPost.getJumlahLikes()));
+        postLikeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onLikeClick(mPost.getPostId(), jumlahLikes, jumlahKomentar, likeButton);
+            }
+        });
+
+        if(mPost.getUser().getPhoto()!=null){
+            Glide.with(PostDanKomentar.this)
+                    .load(mPost.getUser().getPhoto())
+                    .into(photoProfilAdminPost);
+        }
+    }
+    private void cekLike(final ImageView iv, String postId){
+        FirebaseUtils.getPostLikedRef(postId, PostDanKomentar.this).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue()!=null){
+                    iv.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                }else{
+                    iv.setColorFilter(ContextCompat.getColor(getApplicationContext(), android.R.color.tab_indicator_text), android.graphics.PorterDuff.Mode.SRC_IN);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+    private void loadJumlahLikeKomentar(final TextView jumlahLikes, final TextView jumlahKomentar){
         FirebaseUtils.getPostRef().child(mPost.getPostId()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -80,20 +117,8 @@ public class PostDanKomentar extends AppCompatActivity {
 
             }
         });
-        postLikeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onLikeClick(mPost.getPostId());
-            }
-        });
-
-        if(mPost.getUser().getPhoto()!=null){
-            Glide.with(PostDanKomentar.this)
-                    .load(mPost.getUser().getPhoto())
-                    .into(photoProfilAdminPost);
-        }
     }
-    private void onLikeClick(final String postId) {
+    private void onLikeClick(final String postId, final TextView jumlahLikes, final TextView jumlahKomentar, final ImageView ic_like) {
         FirebaseUtils.getPostLikedRef(postId, PostDanKomentar.this)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -116,6 +141,8 @@ public class PostDanKomentar extends AppCompatActivity {
                                         public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
                                             FirebaseUtils.getPostLikedRef(postId, PostDanKomentar.this)
                                                     .setValue(null);
+                                            loadJumlahLikeKomentar(jumlahLikes, jumlahKomentar);
+                                            cekLike(ic_like, postId);
                                         }
                                     });
                         } else {
@@ -134,6 +161,8 @@ public class PostDanKomentar extends AppCompatActivity {
                                         public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
                                             FirebaseUtils.getPostLikedRef(postId, PostDanKomentar.this)
                                                     .setValue(true);
+                                            loadJumlahLikeKomentar(jumlahLikes, jumlahKomentar);
+                                            cekLike(ic_like, postId);
                                         }
                                     });
                         }
@@ -155,6 +184,11 @@ public class PostDanKomentar extends AppCompatActivity {
                 CommentHolder.class,
                 FirebaseUtils.getCommentRef(mPost.getPostId())
         ) {
+            @Override
+            public int getItemViewType(int position) {
+                return super.getItemViewType(position);
+            }
+
             @Override
             protected void populateViewHolder(CommentHolder viewHolder, final Comment model, int position) {
                 viewHolder.setUsername(model.getUser().getNama());

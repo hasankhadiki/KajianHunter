@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -71,8 +72,8 @@ public class TimelineFragment extends Fragment {
             }
         }); */
         initDaftarPost(v);
-        FloatingActionButton fab = (FloatingActionButton)v.findViewById(R.id.fab_timeline);
-        fab.setOnClickListener(new View.OnClickListener() {
+       // FloatingActionButton fab = (FloatingActionButton)v.findViewById(R.id.fab_timeline);
+        /*fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -139,6 +140,7 @@ public class TimelineFragment extends Fragment {
 
 
         });
+        */
         return v;
     }
 
@@ -178,7 +180,7 @@ public class TimelineFragment extends Fragment {
                 viewHolder.setUsername(model.getUser().getNama());
                 viewHolder.setPostText(model.getPostText());
                 viewHolder.setPostTitle(model.getPostTitle());
-
+               // cekLike(viewHolder.ic_like, model.getPostId());
                 if(model.getUser().getPhoto()!=null){
                     Glide.with(getActivity())
                             .load(model.getUser().getPhoto())
@@ -187,7 +189,7 @@ public class TimelineFragment extends Fragment {
                 viewHolder.postLikeLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        onLikeClick(model.getPostId());
+                        onLikeClick(model.getPostId(), viewHolder.ic_like);
                     }
                 });
 
@@ -210,8 +212,25 @@ public class TimelineFragment extends Fragment {
             }
         };
     }
+    private void cekLike(final ImageView iv, String postId){
+        FirebaseUtils.getPostLikedRef(postId, getActivity()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue()!=null){
+                    iv.setColorFilter(ContextCompat.getColor(getActivity(), R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                }else{
+                    iv.setColorFilter(ContextCompat.getColor(getActivity(), android.R.color.tab_indicator_text), android.graphics.PorterDuff.Mode.SRC_IN);
 
-    private void onLikeClick(final String postId) {
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+    private void onLikeClick(final String postId, final ImageView iv) {
         FirebaseUtils.getPostLikedRef(postId, getContext())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -234,6 +253,7 @@ public class TimelineFragment extends Fragment {
                                         public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
                                             FirebaseUtils.getPostLikedRef(postId, getContext())
                                                     .setValue(null);
+                                            iv.setColorFilter(ContextCompat.getColor(getActivity(), android.R.color.tab_indicator_text), android.graphics.PorterDuff.Mode.SRC_IN);
                                         }
                                     });
                         } else {
@@ -252,6 +272,7 @@ public class TimelineFragment extends Fragment {
                                         public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
                                             FirebaseUtils.getPostLikedRef(postId, getContext())
                                                     .setValue(true);
+                                            iv.setColorFilter(ContextCompat.getColor(getActivity(), R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
                                         }
                                     });
                         }
@@ -325,6 +346,7 @@ public class TimelineFragment extends Fragment {
         TextView jumlahLikes;
         TextView jumlahKomentar;
         TextView isiPost, judulPost;
+        ImageView ic_like;
 
 
         public PostHolder(View v) {
@@ -338,6 +360,7 @@ public class TimelineFragment extends Fragment {
             balasTombol = (RelativeLayout) v.findViewById(R.id.balas_tombol);
             isiPost = (TextView)v.findViewById(R.id.deskripsi_pengumuman_timeline);
             judulPost = (TextView)v.findViewById(R.id.judul_kajian_timeline);
+            ic_like = (ImageView) v.findViewById(R.id.iv_like);
         }
 
 
