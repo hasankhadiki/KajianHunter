@@ -10,19 +10,29 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
 import tehhutan.app.kajianhunter.R;
+import tehhutan.app.kajianhunter.model.SavedList;
 
 public class KajianDescription extends AppCompatActivity {
 
 
     TextView txtNama, txtTema, txtDeskripsi, txtTitle;
-    ImageView imgPict;
-    FloatingActionButton fabPlace;
-    Bundle bundle;
+    FloatingActionButton fabPlace, fabSave;
     CollapsingToolbarLayout ctlKajianDesc;
+    ImageView imgPict;
+
+    Bundle bundle;
+
+    private FirebaseDatabase database;
+    private DatabaseReference addsaved;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,14 +44,17 @@ public class KajianDescription extends AppCompatActivity {
         txtTitle = (TextView)findViewById(R.id.txt_kajiandesc_title);
         txtDeskripsi = (TextView)findViewById(R.id.txt_kajiandesc_deskripsi);
         fabPlace = (FloatingActionButton)findViewById(R.id.fab_place);
+        fabSave = (FloatingActionButton)findViewById(R.id.fab_save);
         imgPict  = (ImageView) findViewById(R.id.img_kajiandesc);
         ctlKajianDesc = (CollapsingToolbarLayout)findViewById(R.id.collapsingtoolbar);
 
 
         bundle = getIntent().getExtras();
-        String namaUst = bundle.getString("namaUst");
-        String tema = bundle.getString("tema");
+        final String namaUst = bundle.getString("namaUst");
+        final String tema = bundle.getString("tema");
+        final String tempat = bundle.getString("tempat");
         String deskripsi = bundle.getString("deskripsi");
+
 
         String pict = bundle.getString("pict");
 
@@ -52,6 +65,7 @@ public class KajianDescription extends AppCompatActivity {
         ctlKajianDesc.setTitle(tema);
 //        Picasso.get().load(pict).into(imgPict);
 
+
         fabPlace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -59,6 +73,17 @@ public class KajianDescription extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse(url));
                 startActivity(intent);
+            }
+        });
+
+        database = FirebaseDatabase.getInstance();
+        addsaved = database.getReference("SavedKajian");
+        fabSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SavedList savedList = new SavedList(namaUst, tempat, tema);
+                addsaved.push().setValue(savedList);
+                Toast.makeText(KajianDescription.this, "Kajian Tersimpan", Toast.LENGTH_SHORT).show();
             }
         });
 

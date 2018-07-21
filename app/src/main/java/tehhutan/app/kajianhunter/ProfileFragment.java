@@ -3,23 +3,29 @@ package tehhutan.app.kajianhunter;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,8 +35,11 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Map;
 
+import tehhutan.app.kajianhunter.Interface.ItemClickListener;
+import tehhutan.app.kajianhunter.KajianDetails.KajianDescription;
 import tehhutan.app.kajianhunter.Login_Register.Login;
 import tehhutan.app.kajianhunter.R;
+import tehhutan.app.kajianhunter.model.SavedList;
 
 
 public class ProfileFragment extends Fragment {
@@ -39,12 +48,22 @@ public class ProfileFragment extends Fragment {
     private LinearLayout logout;
     private String idUser;
     private ProgressDialog progress, progress1;
+
+    private FirebaseDatabase database;
+    private DatabaseReference savedlist;
+
+    private RecyclerView recyclerSavedList;
+    private LinearLayoutManager layoutManager;
+    private double latitude = 0.0;
+    private double longtitude = 0.0;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setTitle("Profile");
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        setHasOptionsMenu(true);
+//        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+//        setHasOptionsMenu(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
         View v = inflater.inflate(R.layout.fragment_profile, null);
         /*
         progress = new ProgressDialog(getActivity());
@@ -106,6 +125,17 @@ public class ProfileFragment extends Fragment {
 
         });
         */
+
+        database = FirebaseDatabase.getInstance();
+        savedlist = database.getReference("SavedKajian");
+        //Load Booking List
+        recyclerSavedList = (RecyclerView) v.findViewById(R.id.recycler_saved);
+        recyclerSavedList.computeVerticalScrollRange();
+        recyclerSavedList.hasFixedSize();
+        layoutManager = new LinearLayoutManager(getActivity());
+        recyclerSavedList.setLayoutManager(layoutManager);
+        loadSavedList();
+
         return v;
     }
 
@@ -125,4 +155,38 @@ public class ProfileFragment extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setCustomView(textView);
     }
 
+    public void loadSavedList() {
+        FirebaseRecyclerAdapter<SavedList, SavedViewHolder> adapter = new FirebaseRecyclerAdapter<SavedList, SavedViewHolder>(SavedList.class, R.layout.saved_kajian_item, SavedViewHolder.class, savedlist) {
+            @Override
+            protected void populateViewHolder(final SavedViewHolder viewHolder, final SavedList model, int position) {
+                viewHolder.txtNamaUstadz.setText(model.getNama());
+                viewHolder.txtTema.setText(model.getTema());
+                viewHolder.txtTempat.setText(model.getTempat());
+//                DatabaseReference postRef= getRef(position);
+//
+//                String postKey = postRef.getKey();
+//                postRef.addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot dataSnapshot) {
+//                        latitude = dataSnapshot.child("koordinatTempat").child("latitude").getValue(Double.class);
+//                        longtitude = dataSnapshot.child("koordinatTempat").child("longtitude").getValue(Double.class);
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//
+//                    }
+//                });
+
+                final SavedList clickItem = model;
+                viewHolder.setItemClickListener(new ItemClickListener() {
+                    @Override
+                    public void onCLick(View view, int position, boolean isLongClick) {
+
+                    }
+                });
+            }
+        };
+        recyclerSavedList.setAdapter(adapter);
+    }
 }

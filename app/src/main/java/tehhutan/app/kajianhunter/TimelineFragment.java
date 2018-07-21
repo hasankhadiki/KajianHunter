@@ -62,6 +62,7 @@ public class TimelineFragment extends Fragment {
         setTitle("Timeline");
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setHasOptionsMenu(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
         View v = inflater.inflate(R.layout.fragment_timeline, null);
         /*FloatingActionButton fab = (FloatingActionButton) mRootVIew.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

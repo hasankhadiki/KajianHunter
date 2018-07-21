@@ -1,176 +1,244 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
     tools:context="tehhutan.app.kajianhunter.ProfileFragment">
-    <ScrollView
+
+    <ImageView
+        android:src="@drawable/cover"
+        android:scaleType="centerCrop"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/nestedScroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorAccentOriginal">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="210dp"
-                    android:background="@color/white">
-                    <android.support.constraint.ConstraintLayout
-                        android:id="@+id/area_pp"
-                        android:layout_width="120dp"
-                        android:layout_height="120dp"
-                        android:layout_marginTop="20dp"
-                        android:layout_centerHorizontal="true">
-                        <android.support.constraint.ConstraintLayout
-                            android:id="@+id/img_profile_preview"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-                            <ImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_margin="5dp"
-                                android:src="@drawable/shape_circle"
-                                />
-                            <ImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:src="@drawable/ic_profilephoto"
-                                android:tint="@color/colorPrimary"
-                                />
-                        </android.support.constraint.ConstraintLayout>
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            android:id="@+id/img_profile"
-                            android:visibility="gone"
-                            android:layout_width="120dp"
-                            android:layout_height="120dp" />
-                    </android.support.constraint.ConstraintLayout>
-                    <TextView
-                        android:id="@+id/nama_profile"
-                        android:layout_marginTop="5dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/area_pp"
-                        android:text="Fulan Bin Fulan"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:layout_centerHorizontal="true"
-                        />
-                    <LinearLayout
-                        android:layout_below="@id/nama_profile"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="("/>
-                        <TextView
-                            android:id="@+id/nama_profile_unik"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="ini adalah nama unik"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text=")"/>
-                    </LinearLayout>
-                </RelativeLayout>
-            </android.support.v7.widget.CardView>
-            <android.support.v7.widget.CardView
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_margin="20dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                    <LinearLayout
-                        android:gravity="center_vertical"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <ImageView
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:src="@drawable/ic_phone"
-                            android:tint="@android:color/tab_indicator_text"/>
-                        <TextView
-                            android:layout_width="50dp"
-                            android:layout_height="wrap_content"
-                            android:textStyle="bold"/>
-                        <LinearLayout
-                            android:orientation="vertical"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_marginBottom="5dp"
-                            android:layout_height="wrap_content">
-                            <TextView
-                                android:id="@+id/profile_no_wa"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="085328953039"
-                                android:textSize="22sp"
-                                />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Mobile/WhatsApp"
-                                android:textSize="17sp"
-                                />
+        android:scrollbars="none">
 
-                        </LinearLayout>
-                    </LinearLayout>
-                    <ImageView
-                        android:layout_marginLeft="80dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/defaultText"/>
-                    <LinearLayout
-                        android:layout_marginTop="5dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-                        <ImageView
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:src="@drawable/ic_email"
-                            android:tint="@android:color/tab_indicator_text"/>
-                        <TextView
-                            android:layout_width="50dp"
-                            android:layout_height="wrap_content"
-                            android:textStyle="bold"/>
-                        <LinearLayout
-                            android:orientation="vertical"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
-                            <TextView
-                                android:id="@+id/profile_email"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="personal@gmail.com"
-                                android:textSize="22sp"
-                                />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Personal"
-                                android:textSize="17sp"
-                                />
-                        </LinearLayout>
-                    </LinearLayout>
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
-            <LinearLayout
+        <LinearLayout
+            android:paddingTop="125dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
                 android:layout_width="match_parent"
-                android:layout_height="10dp"></LinearLayout>
+                android:layout_height="wrap_content">
+
+
+                <View
+                    android:layout_marginTop="-40dp"
+                    android:layout_below="@id/header"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@color/white"
+                    />
+
+                <ImageView
+                    android:id="@+id/header"
+                    android:src="@drawable/header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:foreground="@drawable/camera"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/student"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp" />
+
+            </RelativeLayout>
+
+        <LinearLayout
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:weightSum="2"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:textSize="10sp"
+                            android:text="Nama unik"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorPrimaryText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:textSize="14sp"
+                            android:text="hasankhadiki"
+                            android:textColor="@color/colorPrimaryText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:textSize="10sp"
+                            android:text="Nama"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorPrimaryText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:textSize="14sp"
+                            android:text="Hasan Khadiki"
+                            android:textColor="@color/colorPrimaryText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:weightSum="2"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Email"
+                            android:textColor="@color/colorPrimaryText"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="hasankhadiki@mail.com"
+                            android:textColor="@color/colorPrimaryText"
+                            android:textSize="14sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:textSize="10sp"
+                            android:text="No. Telepon"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorPrimaryText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:textSize="14sp"
+                            android:text="083833123456"
+                            android:textColor="@color/colorPrimaryText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <View
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#CED2D8"
+                />
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryText"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:text="Kajian Tersimpan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <android.support.v7.widget.RecyclerView
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/recycler_saved"
+                    android:scrollbars="vertical"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                </android.support.v7.widget.RecyclerView>
+
+            </RelativeLayout>
+
         </LinearLayout>
-    </ScrollView>
-</FrameLayout>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+
+
+</android.support.design.widget.CoordinatorLayout>

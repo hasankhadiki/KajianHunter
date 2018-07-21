@@ -69,6 +69,7 @@ public class FindingFragment extends Fragment {
         setTitle("Finding");
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setHasOptionsMenu(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
         ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(0);
 
 
@@ -299,7 +300,9 @@ public class FindingFragment extends Fragment {
                         String tema = model.getDepartemen();
                         String deskripsi = model.getDeskripsi();
                         String pict =  model.getPict();
+                        String tempat = model.getKegiatan();
                         bundle.putString("namaUst",namaUst);
+                        bundle.putString("tempat",tempat);
                         bundle.putString("tema",tema);
                         bundle.putString("deskripsi",deskripsi);
                         bundle.putString("url",url);
