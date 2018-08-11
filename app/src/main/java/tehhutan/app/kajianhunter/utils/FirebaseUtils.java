@@ -14,6 +14,7 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
@@ -46,6 +47,14 @@ public class FirebaseUtils {
     public static DatabaseReference getPostLikedRef(){
         return FirebaseDatabase.getInstance()
                 .getReference(Constants.POST_LIKED_KEY);
+    }
+
+    public static DatabaseReference getSavedListRef(Context c){
+        return FirebaseDatabase.getInstance().getReference("SavedKajian").child(getUserID(c));
+    }
+
+    public static StorageReference getProfilePhotoRef(){
+        return FirebaseStorage.getInstance().getReference("User/ProfilePhoto");
     }
 
     public static DatabaseReference getPostLikedRef(String postId, Context c){

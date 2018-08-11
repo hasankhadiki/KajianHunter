@@ -3,6 +3,8 @@ package tehhutan.app.kajianhunter;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -18,6 +20,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -183,9 +186,9 @@ public class TimelineFragment extends Fragment {
                 viewHolder.setPostTitle(model.getPostTitle());
                // cekLike(viewHolder.ic_like, model.getPostId());
                 if(model.getUser().getPhoto()!=null){
-                    Glide.with(getActivity())
-                            .load(model.getUser().getPhoto())
-                            .into(viewHolder.photoProfilAdminPost);
+                    byte[] decodedString = Base64.decode(model.getUser().getPhoto(), Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    viewHolder.photoProfilAdminPost.setImageBitmap(decodedByte);
                 }
                 viewHolder.postLikeLayout.setOnClickListener(new View.OnClickListener() {
                     @Override

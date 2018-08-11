@@ -27,7 +27,7 @@ import tehhutan.app.kajianhunter.R;
 import tehhutan.app.kajianhunter.model.User;
 
 public class Register extends AppCompatActivity {
-    private EditText nama, email, no_wa, password,retype_pass;
+    private EditText nama, email, no_wa, password,retype_pass, nama_unik;
     private Button register;
     private FirebaseAuth otentikasi;
     private ProgressDialog progress;
@@ -44,6 +44,7 @@ public class Register extends AppCompatActivity {
         email = (EditText) findViewById(R.id.email_reg);
         no_wa = (EditText) findViewById(R.id.wa_reg);
         password = (EditText) findViewById(R.id.pass_reg);
+        nama_unik = (EditText) findViewById(R.id.namaunik_reg);
 //        retype_pass = (EditText) findViewById(R.id.retypepass_reg);
         register = (Button) findViewById(R.id.btn_register);
 
@@ -87,7 +88,7 @@ public class Register extends AppCompatActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         //Cek apakah NRP sudah ada didalam database
-                        if(dataSnapshot.child(no_wa.getText().toString()).exists())
+                        if(dataSnapshot.child(nama_unik.getText().toString()).exists())
                         {
                             mDialog.dismiss();
                             Toast.makeText(Register.this, "No. Telp tersebut sudah ada di dalam database", Toast.LENGTH_SHORT).show();
@@ -95,8 +96,8 @@ public class Register extends AppCompatActivity {
                         else
                         {
                             mDialog.dismiss();
-                            User user = new User(email.getText().toString(), nama.getText().toString(), password.getText().toString(), null, no_wa.getText().toString());
-                            table_user.child(no_wa.getText().toString()).setValue(user);
+                            User user = new User(email.getText().toString(), nama.getText().toString(), password.getText().toString(), null, no_wa.getText().toString(), nama_unik.getText().toString());
+                            table_user.child(nama_unik.getText().toString()).setValue(user);
                             Toast.makeText(Register.this, "Pendaftaran akun baru berhasil", Toast.LENGTH_SHORT).show();
                             finish();
                         }

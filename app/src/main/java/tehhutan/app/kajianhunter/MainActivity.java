@@ -1,6 +1,10 @@
 package tehhutan.app.kajianhunter;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -8,19 +12,38 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.theartofdev.edmodo.cropper.CropImage;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+import tehhutan.app.kajianhunter.utils.FirebaseUtils;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
     public View kajianDialog;
+    public CircleImageView profilePhoto;
     public Double plcLatitude=86.0, plcLongtitude=181.0;
     //public String locationUri="";
     private final int PLACE_PICKER_REQUEST = 442;
+    private static final int PICK_FROM_GALLERY = 532;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,5 +124,77 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             //Toast.makeText(MainAct.this, "alamat " + address + "\nlatitude : " + String.valueOf(latitude) + "\nlongtitude : " + String.valueOf(longitude), Toast.LENGTH_LONG).show();
             tempat.setText(address);
         }
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(getApplicationContext(), "request223!", Toast.LENGTH_LONG).show();
+                Uri resultUri = result.getUri();
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
+        }
+        if (requestCode == PICK_FROM_GALLERY && resultCode == RESULT_OK) {
+            Bundle extras2 = data.getExtras();
+            Toast.makeText(getApplicationContext(), "request!", Toast.LENGTH_LONG).show();
+            /*if (extras2 != null) {
+                Toast.makeText(getApplicationContext(), "request 2!", Toast.LENGTH_LONG).show();
+                final Bitmap photo = extras2.getParcelable("data");
+                FileOutputStream out = null;
+               /* try {
+                    out = new FileOutputStream("fotoPP");
+                    photo.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+                    // PNG is a lossless format, the compression factor (100) is ignored
+                    Uri alamatPhoto = Uri.fromFile(getApplicationContext().getFileStreamPath("fotoPP"));
+                    StorageReference filepath = FirebaseUtils.getProfilePhotoRef().child(FirebaseUtils.getUserID(getApplicationContext())).child(alamatPhoto.getLastPathSegment());
+                    filepath.putFile(alamatPhoto).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            String URL_IMAGE = taskSnapshot.getDownloadUrl().toString();
+                            FirebaseUtils.getUserRef(FirebaseUtils.getUserID(getApplicationContext())).child("photo").setValue(URL_IMAGE);
+                            profilePhoto.setImageBitmap(photo);
+                            profilePhoto.setScaleType(ImageView.ScaleType.FIT_XY);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getApplicationContext(), "Upload failed!", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        if (out != null) {
+                            out.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                profilePhoto.setImageBitmap(photo);
+                profilePhoto.setScaleType(ImageView.ScaleType.FIT_XY);
+            } */
+            try {
+
+                Toast.makeText(getApplicationContext(),"ddddd",Toast.LENGTH_LONG).show();
+                final Uri imageUri = data.getData();
+                final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                uploadPPtofirebase(selectedImage);
+                profilePhoto.setImageBitmap(selectedImage);
+
+            } catch (FileNotFoundException e) {
+                Toast.makeText(getApplicationContext(),e.toString(),Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+    public void uploadPPtofirebase(Bitmap bmp) {
+
+        ByteArrayOutputStream bao = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.PNG, 100, bao); // bmp is bitmap from user image file
+        byte[] byteArray = bao.toByteArray();
+        String imageB64 = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        FirebaseUtils.getUserRef(FirebaseUtils.getUserID(getApplicationContext())).child("photo").setValue(imageB64);
+        //  store & retrieve this string to firebase
     }
 }

@@ -13,15 +13,25 @@ public class User implements Serializable {
     private String Password;
     private String Photo;
     private String Wa;
+    private String NamaUnik;
     public User() {
     }
 
-    public User(String email, String nama, String password, String photo, String wa) {
+    public User(String email, String nama, String password, String photo, String wa, String namaUnik) {
         Email = email;
         Nama = nama;
         Password = password;
         Photo = photo;
         Wa = wa;
+        NamaUnik = namaUnik;
+    }
+
+    public String getNamaUnik() {
+        return NamaUnik;
+    }
+
+    public void setNamaUnik(String namaUnik) {
+        NamaUnik = namaUnik;
     }
 
     public String getWa() {

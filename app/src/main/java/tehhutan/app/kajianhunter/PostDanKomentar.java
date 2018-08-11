@@ -2,6 +2,8 @@ package tehhutan.app.kajianhunter;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.util.Base64;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -24,6 +27,7 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import tehhutan.app.kajianhunter.model.Comment;
 import tehhutan.app.kajianhunter.model.Post;
 import tehhutan.app.kajianhunter.model.User;
@@ -57,7 +61,8 @@ public class PostDanKomentar extends AppCompatActivity {
         startActivity(i);
     }
     private void initPost() {
-        ImageView photoProfilAdminPost = (ImageView)findViewById(R.id.gambar_admin_timeline);
+        CircleImageView photoProfilAdminPost = (CircleImageView) findViewById(R.id.gambar_admin_timeline);
+        final CircleImageView photoProfilKita = (CircleImageView) findViewById(R.id.gambar_komentator_sekarang);
         TextView namaProfilAdmin = (TextView)findViewById(R.id.nama_admin_timeline);
         LinearLayout postLikeLayout = (LinearLayout)findViewById(R.id.like_layout);
         LinearLayout postCommentLayout = (LinearLayout)findViewById(R.id.comment_layout);
@@ -80,10 +85,26 @@ public class PostDanKomentar extends AppCompatActivity {
         });
 
         if(mPost.getUser().getPhoto()!=null){
-            Glide.with(PostDanKomentar.this)
-                    .load(mPost.getUser().getPhoto())
-                    .into(photoProfilAdminPost);
+            byte[] decodedString = Base64.decode(mPost.getUser().getPhoto(), Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            photoProfilAdminPost.setImageBitmap(decodedByte);
         }
+        FirebaseUtils.getUserRef(FirebaseUtils.getUserID(getApplicationContext())).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User pengguna = dataSnapshot.getValue(User.class);
+                if(pengguna.getPhoto()!=null){
+                    byte[] decodedString = Base64.decode(pengguna.getPhoto(), Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    photoProfilKita.setImageBitmap(decodedByte);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
     private void cekLike(final ImageView iv, String postId){
         FirebaseUtils.getPostLikedRef(postId, PostDanKomentar.this).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -203,9 +224,9 @@ public class PostDanKomentar extends AppCompatActivity {
                     viewHolder.tandaTS.setVisibility(View.GONE);
                 }
                 if(model.getUser().getPhoto()!=null){
-                    Glide.with(PostDanKomentar.this)
-                            .load(model.getUser().getPhoto())
-                            .into(viewHolder.photoProfileKomentator);
+                    byte[] decodedString = Base64.decode(model.getUser().getPhoto(), Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    viewHolder.photoProfileKomentator.setImageBitmap(decodedByte);
                 }
             }
         };
@@ -230,7 +251,7 @@ public class PostDanKomentar extends AppCompatActivity {
         progressDialog.setIndeterminate(true);
         progressDialog.show();
         mComment = new Comment();
-        final String uid = FirebaseUtils.getUid();
+        final String uid = FirebaseUtils.getUserID(getApplicationContext());
         String strComment = komentar.getText().toString();
 
         mComment.setCommentId(uid);
@@ -271,14 +292,14 @@ public class PostDanKomentar extends AppCompatActivity {
     }
 
     public static class CommentHolder extends RecyclerView.ViewHolder {
-        ImageView photoProfileKomentator;
+        CircleImageView photoProfileKomentator;
         ImageView tandaTS;
         TextView namaKomentator;
         TextView isiKomentar;
 
         public CommentHolder(View itemView) {
             super(itemView);
-            photoProfileKomentator = (ImageView) itemView.findViewById(R.id.gambar_komentator_timeline);
+            photoProfileKomentator = (CircleImageView) itemView.findViewById(R.id.gambar_komentator_timeline);
             tandaTS = (ImageView) itemView.findViewById(R.id.komentar_ts);
             namaKomentator = (TextView) itemView.findViewById(R.id.nama_komentator_timeline);
             isiKomentar = (TextView) itemView.findViewById(R.id.isi_komentator);

@@ -46,7 +46,23 @@
             app:met_primaryColor="@color/colorPrimaryDark"
             app:met_singleLineEllipsis="true"
             />
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/namaunik_reg"
+            android:hint="Nama Unik"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColorHint="@color/colorPrimary"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20sp"
+            android:inputType="number"
+            app:met_baseColor="@color/colorPrimaryDark"
+            app:met_floatingLabel="highlight"
+            app:met_maxCharacters="14"
+            android:maxLength="14"
 
+            app:met_primaryColor="@color/colorPrimaryDark"
+            app:met_singleLineEllipsis="true"
+            />
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/nama_reg"
             android:hint="Nama"
