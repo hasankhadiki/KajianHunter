@@ -5,80 +5,80 @@ package tehhutan.app.kajianhunter;
  */
 
 public class KajianList {
-    private String Departemen;
-    private String Kegiatan;
-    private String Nama;
-    private String JamMulai;
-    private String JamAkhir;
-    private String Deskripsi;
-    private String Pict;
+    private String departemen;
+    private String kegiatan;
+    private String nama;
+    private String jamMulai;
+    private String jamAkhir;
+    private String deskripsi;
+    private String pict;
 
     public KajianList() {
     }
 
     public KajianList(String departemen, String kegiatan, String nama, String jamMulai, String jamAkhir, String deskripsi, String pict) {
-        Departemen = departemen;
-        Kegiatan = kegiatan;
-        Nama = nama;
-        JamMulai = jamMulai;
-        JamAkhir = jamAkhir;
-        Deskripsi = deskripsi;
-        Pict = pict;
+        this.departemen = departemen;
+        this.kegiatan = kegiatan;
+        this.nama = nama;
+        this.jamMulai = jamMulai;
+        this.jamAkhir = jamAkhir;
+        this.deskripsi = deskripsi;
+        this.pict = pict;
     }
 
     public String getDepartemen() {
-        return Departemen;
+        return departemen;
     }
 
     public void setDepartemen(String departemen) {
-        Departemen = departemen;
+        this.departemen = departemen;
     }
 
     public String getKegiatan() {
-        return Kegiatan;
+        return kegiatan;
     }
 
     public void setKegiatan(String kegiatan) {
-        Kegiatan = kegiatan;
+        this.kegiatan = kegiatan;
     }
 
     public String getNama() {
-        return Nama;
+        return nama;
     }
 
     public void setNama(String nama) {
-        Nama = nama;
+        this.nama = nama;
     }
 
     public String getJamMulai() {
-        return JamMulai;
+        return jamMulai;
     }
 
     public void setJamMulai(String jamMulai) {
-        JamMulai = jamMulai;
+        this.jamMulai = jamMulai;
     }
 
     public String getJamAkhir() {
-        return JamAkhir;
+        return jamAkhir;
     }
 
     public void setJamAkhir(String jamAkhir) {
-        JamAkhir = jamAkhir;
+        this.jamAkhir = jamAkhir;
     }
 
     public String getDeskripsi() {
-        return Deskripsi;
+        return deskripsi;
     }
 
     public void setDeskripsi(String deskripsi) {
-        Deskripsi = deskripsi;
+        this.deskripsi = deskripsi;
     }
 
     public String getPict() {
-        return Pict;
+        return pict;
     }
 
     public void setPict(String pict) {
-        Pict = pict;
+        this.pict = pict;
     }
 }

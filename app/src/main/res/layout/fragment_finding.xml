@@ -6,20 +6,31 @@
     tools:context="tehhutan.app.kajianhunter.FindingFragment">
 
     <android.support.v7.widget.RecyclerView
+        android:visibility="gone"
         android:id="@+id/recycler_finding"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </android.support.v7.widget.RecyclerView>
 
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="70dp"
         app:backgroundTint="@color/colorPrimary"
         android:tint="@android:color/white"
         app:srcCompat="@drawable/ic_add_black_24dp" />
+
+    <fragment
+        class="com.google.android.gms.maps.SupportMapFragment"
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </fragment>
 
 </FrameLayout>

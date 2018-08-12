@@ -13,9 +13,13 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+
+import android.support.annotation.NonNull;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -40,8 +44,12 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+
+import com.firebase.ui.database.FirebaseRecyclerOptions;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -177,12 +185,20 @@ public class ProfileFragment extends Fragment {
     }
 
     public void loadSavedList() {
-        FirebaseRecyclerAdapter<SavedList, SavedViewHolder> adapter = new FirebaseRecyclerAdapter<SavedList, SavedViewHolder>(SavedList.class, R.layout.saved_kajian_item, SavedViewHolder.class, savedlist) {
+
+        FirebaseRecyclerOptions<SavedList> options =
+                new FirebaseRecyclerOptions.Builder<SavedList>()
+                        .setQuery(savedlist, SavedList.class)
+                        .build();
+
+        final FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<SavedList, SavedViewHolder>(options) {
             @Override
-            protected void populateViewHolder(final SavedViewHolder viewHolder, final SavedList model, int position) {
+            protected void onBindViewHolder(final SavedViewHolder viewHolder, final int position, final SavedList model) {
+
                 viewHolder.txtNamaUstadz.setText(model.getNama());
                 viewHolder.txtTema.setText(model.getTema());
                 viewHolder.txtTempat.setText(model.getTempat());
+
 //                DatabaseReference postRef= getRef(position);
 //
 //                String postKey = postRef.getKey();
@@ -199,6 +215,7 @@ public class ProfileFragment extends Fragment {
 //                    }
 //                });
 
+
                 final SavedList clickItem = model;
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
@@ -206,9 +223,41 @@ public class ProfileFragment extends Fragment {
 
                     }
                 });
+
+            }
+
+
+            @NonNull
+            @Override
+            public SavedViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.saved_kajian_item, parent, false);
+
+                return new SavedViewHolder(view);
             }
         };
+
+        adapter.startListening();
+        adapter.notifyDataSetChanged();
         recyclerSavedList.setAdapter(adapter);
+
+//        FirebaseRecyclerAdapter<SavedList, SavedViewHolder> adapter = new FirebaseRecyclerAdapter<SavedList, SavedViewHolder>(SavedList.class, R.layout.saved_kajian_item, SavedViewHolder.class, savedlist) {
+//            @Override
+//            protected void populateViewHolder(final SavedViewHolder viewHolder, final SavedList model, int position) {
+//                viewHolder.txtNamaUstadz.setText(model.getNama());
+//                viewHolder.txtTema.setText(model.getTema());
+//                viewHolder.txtTempat.setText(model.getTempat());
+//
+//                final SavedList clickItem = model;
+//                viewHolder.setItemClickListener(new ItemClickListener() {
+//                    @Override
+//                    public void onCLick(View view, int position, boolean isLongClick) {
+//
+//                    }
+//                });
+//            }
+//        };
+
     }
 
     @Override

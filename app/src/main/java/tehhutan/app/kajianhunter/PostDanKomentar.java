@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +13,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.util.Base64;
+
+import android.view.LayoutInflater;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -21,6 +25,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.MutableData;
@@ -199,19 +204,14 @@ public class PostDanKomentar extends AppCompatActivity {
         RecyclerView commentRecyclerView = (RecyclerView) findViewById(R.id.kolom_komentar);
         commentRecyclerView.setLayoutManager(new LinearLayoutManager(PostDanKomentar.this));
 
-        FirebaseRecyclerAdapter<Comment, CommentHolder> commentAdapter = new FirebaseRecyclerAdapter<Comment, CommentHolder>(
-                Comment.class,
-                R.layout.segmen_komentar,
-                CommentHolder.class,
-                FirebaseUtils.getCommentRef(mPost.getPostId())
-        ) {
-            @Override
-            public int getItemViewType(int position) {
-                return super.getItemViewType(position);
-            }
+        FirebaseRecyclerOptions<Comment> options =
+                new FirebaseRecyclerOptions.Builder<Comment>()
+                        .setQuery(FirebaseUtils.getCommentRef(mPost.getPostId()), Comment.class)
+                        .build();
 
+        final FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<Comment, CommentHolder>(options) {
             @Override
-            protected void populateViewHolder(CommentHolder viewHolder, final Comment model, int position) {
+            protected void onBindViewHolder(final CommentHolder viewHolder, final int position, final Comment model) {
                 viewHolder.setUsername(model.getUser().getNama());
                 viewHolder.setComment(model.getComment());
                 viewHolder.namaKomentator.setOnClickListener(new View.OnClickListener() {
@@ -228,10 +228,54 @@ public class PostDanKomentar extends AppCompatActivity {
                     Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                     viewHolder.photoProfileKomentator.setImageBitmap(decodedByte);
                 }
+
+            }
+
+            @NonNull
+            @Override
+            public CommentHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.segmen_komentar, parent, false);
+
+                return new CommentHolder(view);
             }
         };
 
-        commentRecyclerView.setAdapter(commentAdapter);
+//        FirebaseRecyclerAdapter<Comment, CommentHolder> commentAdapter = new FirebaseRecyclerAdapter<Comment, CommentHolder>(
+//                Comment.class,
+//                R.layout.segmen_komentar,
+//                CommentHolder.class,
+//                FirebaseUtils.getCommentRef(mPost.getPostId())
+//        ) {
+//            @Override
+//            public int getItemViewType(int position) {
+//                return super.getItemViewType(position);
+//            }
+//
+//            @Override
+//            protected void populateViewHolder(CommentHolder viewHolder, final Comment model, int position) {
+//                viewHolder.setUsername(model.getUser().getNama());
+//                viewHolder.setComment(model.getComment());
+//                viewHolder.namaKomentator.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        bukaWA(model);
+//                    }
+//                });
+//                if(!mPost.getUser().getWa().equals(model.getUser().getWa())){
+//                    viewHolder.tandaTS.setVisibility(View.GONE);
+//                }
+//                if(model.getUser().getPhoto()!=null){
+//                    Glide.with(PostDanKomentar.this)
+//                            .load(model.getUser().getPhoto())
+//                            .into(viewHolder.photoProfileKomentator);
+//                }
+//            }
+//        };
+
+        adapter.startListening();
+        adapter.notifyDataSetChanged();
+        commentRecyclerView.setAdapter(adapter);
     }
 
     private void init() {

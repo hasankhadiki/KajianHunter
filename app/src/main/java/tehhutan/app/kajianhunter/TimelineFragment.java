@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -167,24 +168,27 @@ public class TimelineFragment extends Fragment {
         daftarPost = (RecyclerView) v.findViewById(R.id.daftarPost);
         daftarPost.setLayoutManager(new LinearLayoutManager(getContext()));
         setupAdapter();
+        mPostAdapter.startListening();
+        mPostAdapter.notifyDataSetChanged();
         daftarPost.setAdapter(mPostAdapter);
     }
 
     private void setupAdapter() {
-        mPostAdapter = new FirebaseRecyclerAdapter<Post, PostHolder>(
-                Post.class,
-                R.layout.timeline_item,
-                PostHolder.class,
-                FirebaseUtils.getPostRef()
-        ) {
+
+        FirebaseRecyclerOptions<Post> options =
+                new FirebaseRecyclerOptions.Builder<Post>()
+                        .setQuery(FirebaseUtils.getPostRef(), Post.class)
+                        .build();
+
+        mPostAdapter = new FirebaseRecyclerAdapter<Post, PostHolder>(options) {
             @Override
-            protected void populateViewHolder(final PostHolder viewHolder, final Post model, int position) {
+            protected void onBindViewHolder(final PostHolder viewHolder, final int position, final Post model) {
                 viewHolder.setNumComments(String.valueOf(model.getJumlahComments()));
                 viewHolder.setNumLikes(String.valueOf(model.getJumlahLikes()));
                 viewHolder.setUsername(model.getUser().getNama());
                 viewHolder.setPostText(model.getPostText());
                 viewHolder.setPostTitle(model.getPostTitle());
-               // cekLike(viewHolder.ic_like, model.getPostId());
+
                 if(model.getUser().getPhoto()!=null){
                     byte[] decodedString = Base64.decode(model.getUser().getPhoto(), Base64.DEFAULT);
                     Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
@@ -213,8 +217,63 @@ public class TimelineFragment extends Fragment {
                         startActivity(intent);
                     }
                 });
+
+            }
+
+            @NonNull
+            @Override
+            public PostHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.timeline_item, parent, false);
+
+                return new PostHolder(view);
             }
         };
+//        mPostAdapter = new FirebaseRecyclerAdapter<Post, PostHolder>(
+//                Post.class,
+//                R.layout.timeline_item,
+//                PostHolder.class,
+//                FirebaseUtils.getPostRef()
+//        ) {
+//            @Override
+//            protected void populateViewHolder(final PostHolder viewHolder, final Post model, int position) {
+//                viewHolder.setNumComments(String.valueOf(model.getJumlahComments()));
+//                viewHolder.setNumLikes(String.valueOf(model.getJumlahLikes()));
+//                viewHolder.setUsername(model.getUser().getNama());
+//                viewHolder.setPostText(model.getPostText());
+//                viewHolder.setPostTitle(model.getPostTitle());
+//               // cekLike(viewHolder.ic_like, model.getPostId());
+//                if(model.getUser().getPhoto()!=null){
+//                    Glide.with(getActivity())
+//                            .load(model.getUser().getPhoto())
+//                            .into(viewHolder.photoProfilAdminPost);
+//                }
+//                viewHolder.postLikeLayout.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        onLikeClick(model.getPostId(), viewHolder.ic_like);
+//                    }
+//                });
+//
+//                viewHolder.postCommentLayout.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Intent intent = new Intent(getContext(), PostDanKomentar.class);
+//                        intent.putExtra(Constants.EXTRA_POST, model);
+//                        startActivity(intent);
+//                    }
+//                });
+//                viewHolder.balasTombol.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Intent intent = new Intent(getContext(), PostDanKomentar.class);
+//                        intent.putExtra(Constants.EXTRA_POST, model);
+//                        startActivity(intent);
+//                    }
+//                });
+//            }
+//        };
+
     }
     private void cekLike(final ImageView iv, String postId){
         FirebaseUtils.getPostLikedRef(postId, getActivity()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -234,6 +293,7 @@ public class TimelineFragment extends Fragment {
             }
         });
     }
+
     private void onLikeClick(final String postId, final ImageView iv) {
         FirebaseUtils.getPostLikedRef(postId, getContext())
                 .addListenerForSingleValueEvent(new ValueEventListener() {

@@ -10,17 +10,19 @@ public class BookingList {
     private String Nama;
     private String JamMulai;
     private String JamAkhir;
+    private String Deskripsi;
 
     public BookingList() {
     }
 
-    public BookingList(String departemen,  String nama, String kegiatan, String jamMulai, String jamAkhir) {
+    public BookingList(String departemen,  String nama, String kegiatan, String jamMulai, String jamAkhir, String desripsi) {
 
         Departemen = departemen;
         Nama = nama;
         Kegiatan = kegiatan;
         JamMulai = jamMulai;
         JamAkhir = jamAkhir;
+        Deskripsi = desripsi;
     }
 
     public String getDepartemen() {
@@ -63,5 +65,11 @@ public class BookingList {
         JamAkhir = jamAkhir;
     }
 
+    public String getDeskripsi() {
+        return Deskripsi;
+    }
 
+    public void setDeskripsi(String deskripsi) {
+        Deskripsi = deskripsi;
+    }
 }
