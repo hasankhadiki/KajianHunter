@@ -1,28 +1,21 @@
 package tehhutan.app.kajianhunter;
 
-import android.*;
-import android.Manifest;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.location.Address;
 import android.location.Criteria;
-import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -30,7 +23,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,25 +37,18 @@ import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -72,11 +57,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 
-import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.EasyPermissions;
 import tehhutan.app.kajianhunter.Interface.ItemClickListener;
 import tehhutan.app.kajianhunter.KajianDetails.KajianDescription;
 import tehhutan.app.kajianhunter.model.BookingList;
@@ -364,10 +346,10 @@ public class FindingFragment extends Fragment implements OnMapReadyCallback{
                                         , editJamMulai.getText().toString()
                                         , editJamAkhir.getText().toString()
                                         , editDeskripsi.getText().toString()
+                                        ,mainRef.plcLatitude
+                                        ,mainRef.plcLongtitude
                                 );
                                 addKajian.child(mGroupId).setValue(newBooking);
-                                addKajian.child(mGroupId).child("koordinatTempat").child("latitude").setValue(mainRef.plcLatitude);
-                                addKajian.child(mGroupId).child("koordinatTempat").child("longtitude").setValue(mainRef.plcLongtitude);
                                 Toast.makeText(getActivity(), "Kajian akan ditampilkan jika disetujui!", Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();
                             } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
@@ -378,6 +360,8 @@ public class FindingFragment extends Fragment implements OnMapReadyCallback{
                                         , editJamMulai.getText().toString()
                                         , editJamAkhir.getText().toString()
                                         , editDeskripsi.getText().toString()
+                                        ,mainRef.plcLatitude
+                                        ,mainRef.plcLongtitude
                                 );
                                 addKajian.child(mGroupId).setValue(newBooking);
                                 addKajian.child(mGroupId).child("koordinatTempat").child("latitude").setValue(mainRef.plcLatitude);
@@ -605,22 +589,47 @@ public class FindingFragment extends Fragment implements OnMapReadyCallback{
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot s : dataSnapshot.getChildren()) {
-                    KajianList kajianList = s.getValue(KajianList.class);
-                    final String tema = s.child("departemen").getValue().toString();
-                    final String tempat = s.child("kegiatan").getValue().toString();
-                    final String deskripsi = s.child("deskripsi").getValue().toString();
-//                    final String pict = child.child("pict").getValue().toString();
-                    final String namaUst = s.child("nama").getValue().toString();
-                    final double latitude = s.child("koordinatTempat").child("latitude").getValue(double.class);
-                    final double longitude = s.child("koordinatTempat").child("longtitude").getValue(double.class);
+                    final KajianList kajianList = s.getValue(KajianList.class);
+
 
                     kajian.add(kajianList);
                     for (int i = 0; i < kajian.size(); i++) {
-                        LatLng latLng = new LatLng(latitude, longitude);
+                        final String tema = kajianList.getDepartemen();
+                        final String tempat = kajianList.getNama();
+                        final String deskripsi = kajianList.getDeskripsi();
+                        final String namaUst = kajianList.getKegiatan();
+
+                        LatLng latLng = new LatLng(kajianList.getLatitude(), kajianList.getLongitude());
                         if (map != null) {
-                            marker = map.addMarker(new MarkerOptions().position(latLng).title(kajianList.getDepartemen()));
+
+                            marker = map.addMarker(new MarkerOptions().position(latLng)
+                                    .title(kajianList.getDepartemen())
+                                    .snippet(kajianList.getKegiatan()));
+
                         }
+
+//                        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+//                            @Override
+//                            public boolean onMarkerClick(Marker marker) {
+//
+//                                Intent intent = new Intent(getActivity(), KajianDescription.class);
+//                                Bundle bundle = new Bundle();
+//                                String url = "http://maps.google.com/maps?q=" + kajianList.getLatitude() + "," + kajianList.getLongitude();
+//                                bundle.putString("tema",tema);
+//                                bundle.putString("url",url);
+//                                bundle.putString("namaUst",namaUst);
+//                                bundle.putString("tempat",tempat);
+//                                bundle.putString("deskripsi",deskripsi);
+////                                bundle.putString("pict",pict);
+//                                intent.putExtras(bundle);
+//                                startActivity(intent);
+//                                return false;
+//                            }
+//                        });
+
                     }
+
+
 
                     map.getUiSettings().setMyLocationButtonEnabled(true);
 
@@ -633,31 +642,20 @@ public class FindingFragment extends Fragment implements OnMapReadyCallback{
                         Location myLocation = locationManager.getLastKnownLocation(provider);
                         if(myLocation != null) {
                             LatLng currentLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
-                            map.moveCamera(CameraUpdateFactory.newLatLng(currentLatLng));
-                            map.moveCamera(CameraUpdateFactory.zoomTo(14));
+                            map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 14));
+                            map.animateCamera(CameraUpdateFactory.zoomTo(13), 2000, null);
+
+                            Circle circle = map.addCircle(new CircleOptions()
+                                    .center(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()))
+                                    .radius(3000)
+                                    .strokeColor(Color.parseColor("#009382"))
+                                    .fillColor(Color.TRANSPARENT));
                         } else {
                             map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(29.9648943,-90.1095941)));
                             map.moveCamera(CameraUpdateFactory.zoomTo(14));
                         }
                     }
 
-                    map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                        @Override
-                        public boolean onMarkerClick(Marker marker) {
-                            Intent intent = new Intent(getActivity(), KajianDescription.class);
-                            Bundle bundle = new Bundle();
-                            String url = "http://maps.google.com/maps?q=" + latitude + "," + longitude;
-                            bundle.putString("namaUst",namaUst);
-                            bundle.putString("tema",tema);
-                            bundle.putString("tempat",tempat);
-                            bundle.putString("deskripsi",deskripsi);
-                            bundle.putString("url",url);
-//                                        bundle.putString("pict",pict);
-                            intent.putExtras(bundle);
-                            startActivity(intent);
-                            return false;
-                        }
-                    });
                 }
             }
 

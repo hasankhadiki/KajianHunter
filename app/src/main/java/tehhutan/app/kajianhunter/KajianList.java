@@ -12,11 +12,14 @@ public class KajianList {
     private String jamAkhir;
     private String deskripsi;
     private String pict;
+    private Double latitude;
+    private Double longitude;
 
-    public KajianList() {
+    public KajianList(){
+
     }
 
-    public KajianList(String departemen, String kegiatan, String nama, String jamMulai, String jamAkhir, String deskripsi, String pict) {
+    public KajianList(String departemen, String kegiatan, String nama, String jamMulai, String jamAkhir, String deskripsi, String pict, Double latitude, Double longitude) {
         this.departemen = departemen;
         this.kegiatan = kegiatan;
         this.nama = nama;
@@ -24,6 +27,8 @@ public class KajianList {
         this.jamAkhir = jamAkhir;
         this.deskripsi = deskripsi;
         this.pict = pict;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public String getDepartemen() {
@@ -80,5 +85,21 @@ public class KajianList {
 
     public void setPict(String pict) {
         this.pict = pict;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 }

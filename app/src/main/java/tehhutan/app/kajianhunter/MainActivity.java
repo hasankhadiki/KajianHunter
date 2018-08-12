@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         //String imageB64 = Base64.encodeToString(byteArray, Base64.DEFAULT);
         //FirebaseUtils.getUserRef(FirebaseUtils.getUserID(getApplicationContext())).child("photo").setValue(imageB64);
         //        //  store & retrieve this string to firebase
-        StorageReference filepath = FirebaseUtils.getProfilePhotoRef().child(FirebaseUtils.getUserID(getApplicationContext())).child("KajianPP.png");
+        final StorageReference filepath = FirebaseUtils.getProfilePhotoRef().child(FirebaseUtils.getUserID(getApplicationContext())).child("KajianPP.png");
         UploadTask uploadTask = filepath.putBytes(byteArray);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
@@ -215,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
                 // ...
-                String URL_IMAGE = taskSnapshot.getDownloadUrl().toString();
+                String URL_IMAGE = filepath.getDownloadUrl().toString();
                 FirebaseUtils.getUserRef(FirebaseUtils.getUserID(getApplicationContext())).child("photo").setValue(URL_IMAGE);
                 profilePhoto.setImageBitmap(photo);
                 profilePhoto.setForeground(new ColorDrawable(ContextCompat.getColor(getApplicationContext(), android.R.color.transparent)));
