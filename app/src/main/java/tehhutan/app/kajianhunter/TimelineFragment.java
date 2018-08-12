@@ -190,9 +190,7 @@ public class TimelineFragment extends Fragment {
                 viewHolder.setPostTitle(model.getPostTitle());
 
                 if(model.getUser().getPhoto()!=null){
-                    byte[] decodedString = Base64.decode(model.getUser().getPhoto(), Base64.DEFAULT);
-                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                    viewHolder.photoProfilAdminPost.setImageBitmap(decodedByte);
+                    Glide.with(getActivity()).load(model.getUser().getPhoto()).into(viewHolder.photoProfilAdminPost);
                 }
                 viewHolder.postLikeLayout.setOnClickListener(new View.OnClickListener() {
                     @Override

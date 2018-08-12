@@ -152,11 +152,9 @@ public class ProfileFragment extends Fragment {
                 if(pengguna.getNamaUnik()!=null){
                     namaunik.setText(pengguna.getNamaUnik());
                 }
-                if(pengguna.getPhoto()!=null){
-                    byte[] decodedString = Base64.decode(pengguna.getPhoto(), Base64.DEFAULT);
-                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                    mainRef.profilePhoto.setImageBitmap(decodedByte);
-                    mainRef.profilePhoto.setForeground(new ColorDrawable(ContextCompat.getColor(getActivity(), android.R.color.transparent)));
+               if(pengguna.getPhoto()!=null){
+                    Glide.with(getActivity()).load(pengguna.getPhoto()).into(mainRef.profilePhoto);
+                   mainRef.profilePhoto.setForeground(new ColorDrawable(ContextCompat.getColor(getActivity(), android.R.color.transparent)));
                 }
             }
 

@@ -1,16 +1,21 @@
 package tehhutan.app.kajianhunter;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.view.MenuItem;
@@ -24,6 +29,7 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -175,26 +181,45 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 profilePhoto.setScaleType(ImageView.ScaleType.FIT_XY);
             } */
             try {
-
-                Toast.makeText(getApplicationContext(),"ddddd",Toast.LENGTH_LONG).show();
+                ProgressDialog dialog = new ProgressDialog(this);
+                dialog.setMessage("uploading");
+                dialog.setCancelable(false);
                 final Uri imageUri = data.getData();
                 final InputStream imageStream = getContentResolver().openInputStream(imageUri);
                 final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                 uploadPPtofirebase(selectedImage);
-                profilePhoto.setImageBitmap(selectedImage);
+               // profilePhoto.setImageBitmap(selectedImage);
 
             } catch (FileNotFoundException e) {
                 Toast.makeText(getApplicationContext(),e.toString(),Toast.LENGTH_LONG).show();
             }
         }
     }
-    public void uploadPPtofirebase(Bitmap bmp) {
-
+    public void uploadPPtofirebase(final Bitmap photo) {
         ByteArrayOutputStream bao = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.PNG, 100, bao); // bmp is bitmap from user image file
+        photo.compress(Bitmap.CompressFormat.PNG, 100, bao); // bmp is bitmap from user image file
         byte[] byteArray = bao.toByteArray();
-        String imageB64 = Base64.encodeToString(byteArray, Base64.DEFAULT);
-        FirebaseUtils.getUserRef(FirebaseUtils.getUserID(getApplicationContext())).child("photo").setValue(imageB64);
-        //  store & retrieve this string to firebase
+        //String imageB64 = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        //FirebaseUtils.getUserRef(FirebaseUtils.getUserID(getApplicationContext())).child("photo").setValue(imageB64);
+        //        //  store & retrieve this string to firebase
+        StorageReference filepath = FirebaseUtils.getProfilePhotoRef().child(FirebaseUtils.getUserID(getApplicationContext())).child("KajianPP.png");
+        UploadTask uploadTask = filepath.putBytes(byteArray);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                // ...
+                String URL_IMAGE = taskSnapshot.getDownloadUrl().toString();
+                FirebaseUtils.getUserRef(FirebaseUtils.getUserID(getApplicationContext())).child("photo").setValue(URL_IMAGE);
+                profilePhoto.setImageBitmap(photo);
+                profilePhoto.setForeground(new ColorDrawable(ContextCompat.getColor(getApplicationContext(), android.R.color.transparent)));
+            }
+        });
     }
 }

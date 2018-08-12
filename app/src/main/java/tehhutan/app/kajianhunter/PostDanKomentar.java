@@ -90,18 +90,14 @@ public class PostDanKomentar extends AppCompatActivity {
         });
 
         if(mPost.getUser().getPhoto()!=null){
-            byte[] decodedString = Base64.decode(mPost.getUser().getPhoto(), Base64.DEFAULT);
-            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-            photoProfilAdminPost.setImageBitmap(decodedByte);
+            Glide.with(getApplicationContext()).load(mPost.getUser().getPhoto()).into(photoProfilAdminPost);
         }
         FirebaseUtils.getUserRef(FirebaseUtils.getUserID(getApplicationContext())).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User pengguna = dataSnapshot.getValue(User.class);
                 if(pengguna.getPhoto()!=null){
-                    byte[] decodedString = Base64.decode(pengguna.getPhoto(), Base64.DEFAULT);
-                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                    photoProfilKita.setImageBitmap(decodedByte);
+                    Glide.with(getApplicationContext()).load(pengguna.getPhoto()).into(photoProfilKita);
                 }
             }
 
@@ -224,9 +220,7 @@ public class PostDanKomentar extends AppCompatActivity {
                     viewHolder.tandaTS.setVisibility(View.GONE);
                 }
                 if(model.getUser().getPhoto()!=null){
-                    byte[] decodedString = Base64.decode(model.getUser().getPhoto(), Base64.DEFAULT);
-                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                    viewHolder.photoProfileKomentator.setImageBitmap(decodedByte);
+                    Glide.with(getApplicationContext()).load(model.getUser().getPhoto()).into(viewHolder.photoProfileKomentator);
                 }
 
             }
@@ -295,7 +289,7 @@ public class PostDanKomentar extends AppCompatActivity {
         progressDialog.setIndeterminate(true);
         progressDialog.show();
         mComment = new Comment();
-        final String uid = FirebaseUtils.getUserID(getApplicationContext());
+        final String uid = FirebaseUtils.getUid();
         String strComment = komentar.getText().toString();
 
         mComment.setCommentId(uid);
