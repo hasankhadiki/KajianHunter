@@ -14,8 +14,12 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -66,9 +70,9 @@ import tehhutan.app.kajianhunter.model.BookingList;
 import static android.content.Context.LOCATION_SERVICE;
 
 
-public class FindingFragment extends Fragment implements OnMapReadyCallback{
+public class FindingFragment extends Fragment {
 
-    private boolean needsInit=false;
+
 
     private final int REQUEST_LOCATION_PERMISSION = 1;
 
@@ -95,6 +99,9 @@ public class FindingFragment extends Fragment implements OnMapReadyCallback{
     Marker marker;
     List<KajianList> kajian = new ArrayList<>();
 
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+
     public FindingFragment() {
 
     }
@@ -115,115 +122,11 @@ public class FindingFragment extends Fragment implements OnMapReadyCallback{
         addKajian = database.getReference("KajianList/Unverified");
         View view = inflater.inflate(R.layout.fragment_finding, container, false);
 
-//        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-//        mapFragment.getMapAsync(new OnMapReadyCallback() {
-//            @Override
-//            public void onMapReady(GoogleMap googleMap) {
-//                map = googleMap;
-//                googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-//                kajianlist.addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        for (DataSnapshot s : dataSnapshot.getChildren()) {
-//                            KajianList kajianList = s.getValue(KajianList.class);
-//
-//                            kajian.add(kajianList);
-//                            for (int i = 0; i < kajian.size(); i++) {
-//                                LatLng latLng = new LatLng(s.child("koordinatTempat").child("latitude").getValue(Long.class)
-//                                        , s.child("koordinatTempat").child("longtitude").getValue(Long.class));
-//                                if (map != null) {
-//                                    marker = map.addMarker(new MarkerOptions().position(latLng).title(kajianList.getDepartemen()));
-//                                }
-//                            }
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//                });
-//            }
-//        });
+        viewPager = (ViewPager) view.findViewById(R.id.viewpager);
+        setupViewPager(viewPager);
 
-
-//        kajianlist.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
-//                for(DataSnapshot child : dataSnapshot.getChildren()){
-//
-//                    final String tema = child.child("departemen").getValue().toString();
-//                    final String tempat = child.child("kegiatan").getValue().toString();
-//                    final String deskripsi = child.child("deskripsi").getValue().toString();
-////                    final String pict = child.child("pict").getValue().toString();
-//                    final String namaUst = child.child("nama").getValue().toString();
-//                    final double latitude = child.child("koordinatTempat").child("latitude").getValue(double.class);
-//                    final double longitude = child.child("koordinatTempat").child("longtitude").getValue(double.class);
-//
-//
-//                    final LatLng latLng = new LatLng(latitude, longitude);
-//                        mapFragment = SupportMapFragment.newInstance();
-//                        mapFragment.getMapAsync(new OnMapReadyCallback() {
-//                            @Override
-//                            public void onMapReady(GoogleMap googleMap) {
-//
-//                                map = googleMap;
-//
-//                                map.addMarker(new MarkerOptions()
-//                                        .position(latLng)
-//                                        .title(tema));
-//                                map.getUiSettings().setMyLocationButtonEnabled(true);
-//
-//                                // Zoom to device's current location
-//                                if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-//                                        ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//                                    map.setMyLocationEnabled(true);
-//                                    LocationManager locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
-//                                    String provider = locationManager.getBestProvider(new Criteria(), true);
-//                                    Location myLocation = locationManager.getLastKnownLocation(provider);
-//                                    if(myLocation != null) {
-//                                        LatLng currentLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
-//                                        map.moveCamera(CameraUpdateFactory.newLatLng(currentLatLng));
-//                                        map.moveCamera(CameraUpdateFactory.zoomTo(14));
-//                                    } else {
-//                                        Log.v(TAG, "Can't figure out current location :(");
-//                                        map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(29.9648943,-90.1095941)));
-//                                        map.moveCamera(CameraUpdateFactory.zoomTo(14));
-//                                    }
-//                                }
-//
-//                                map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//                                    @Override
-//                                    public boolean onMarkerClick(Marker marker) {
-//                                        Intent intent = new Intent(getActivity(), KajianDescription.class);
-//                                        Bundle bundle = new Bundle();
-//                                        String url = "http://maps.google.com/maps?q=" + latitude + "," + longitude;
-//                                        bundle.putString("namaUst",namaUst);
-//                                        bundle.putString("tema",tema);
-//                                        bundle.putString("tempat",tempat);
-//                                        bundle.putString("deskripsi",deskripsi);
-//                                        bundle.putString("url",url);
-////                                        bundle.putString("pict",pict);
-//                                        intent.putExtras(bundle);
-//                                        startActivity(intent);
-//                                        return false;
-//                                    }
-//                                });
-//                            }
-//                        });
-//
-//                    // R.id.map is a FrameLayout, not a Fragment
-//                    getChildFragmentManager().beginTransaction().replace(R.id.map, mapFragment).commit();
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-
+        tabLayout = (TabLayout) view.findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
 
         FloatingActionButton fab = (FloatingActionButton)view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -379,14 +282,6 @@ public class FindingFragment extends Fragment implements OnMapReadyCallback{
 
         });
 
-        //Load Booking List
-        recyclerBookingList = (RecyclerView) view.findViewById(R.id.recycler_finding);
-        recyclerBookingList.hasFixedSize();
-        recyclerBookingList.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(getActivity());
-        recyclerBookingList.setLayoutManager(layoutManager);
-        loadKajianList();
-
         return view;
     }
 
@@ -407,134 +302,6 @@ public class FindingFragment extends Fragment implements OnMapReadyCallback{
         }
     };
 
-    public void loadKajianList() {
-
-        FirebaseRecyclerOptions<KajianList> options =
-                new FirebaseRecyclerOptions.Builder<KajianList>()
-                        .setQuery(kajianlist, KajianList.class)
-                        .build();
-
-        final FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<KajianList, MenuViewHolder>(options) {
-            @Override
-            protected void onBindViewHolder(final MenuViewHolder viewHolder, final int position, final KajianList model) {
-
-                viewHolder.txtNamaUstadz.setText(model.getNama());
-                viewHolder.txtTema.setText(model.getDepartemen());
-                viewHolder.txtTempat.setText(model.getKegiatan());
-                viewHolder.txtJamMulai.setText(model.getJamMulai());
-                viewHolder.txtJamAkhir.setText(model.getJamAkhir());
-                DatabaseReference postRef= getRef(position);
-                String postKey = postRef.getKey();
-                postRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        latitude = dataSnapshot.child("koordinatTempat").child("latitude").getValue(Double.class);
-                        longtitude = dataSnapshot.child("koordinatTempat").child("longtitude").getValue(Double.class);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-                final KajianList clickItem = model;
-                viewHolder.setItemClickListener(new ItemClickListener() {
-                    @Override
-                    public void onCLick(View view, int position, boolean isLongClick) {
-                        //String url = viewHolder.txtTempat.getText().toString();
-//                        Intent intent = new Intent(Intent.ACTION_VIEW);
-//                        intent.setData(Uri.parse(url));
-                        Intent intent = new Intent(getActivity(), KajianDescription.class);
-                        Bundle bundle = new Bundle();
-                        String url = "http://maps.google.com/maps?q=" + latitude + "," + longtitude;
-                        String namaUst = model.getNama();
-                        String tema = model.getDepartemen();
-                        String deskripsi = model.getDeskripsi();
-                        String pict =  model.getPict();
-                        String tempat = model.getKegiatan();
-                        bundle.putString("namaUst",namaUst);
-                        bundle.putString("tempat",tempat);
-                        bundle.putString("tema",tema);
-                        bundle.putString("deskripsi",deskripsi);
-                        bundle.putString("url",url);
-                        bundle.putString("pict",pict);
-                        intent.putExtras(bundle);
-                        startActivity(intent);
-
-                    }
-                });
-
-            }
-
-
-            @NonNull
-            @Override
-            public MenuViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.finding_item, parent, false);
-
-                return new MenuViewHolder(view);
-            }
-        };
-
-        adapter.startListening();
-        adapter.notifyDataSetChanged();
-        recyclerBookingList.setAdapter(adapter);
-
-//        FirebaseRecyclerAdapter<KajianList, MenuViewHolder> adapter = new FirebaseRecyclerAdapter<KajianList, MenuViewHolder>(KajianList.class, R.layout.finding_item, MenuViewHolder.class, kajianlist) {
-//            @Override
-//            protected void populateViewHolder(final MenuViewHolder viewHolder, final KajianList model, int position) {
-//                viewHolder.txtNamaUstadz.setText(model.getNama());
-//                viewHolder.txtTema.setText(model.getDepartemen());
-//                viewHolder.txtTempat.setText(model.getKegiatan());
-//                viewHolder.txtJamMulai.setText(model.getJamMulai());
-//                viewHolder.txtJamAkhir.setText(model.getJamAkhir());
-//                DatabaseReference postRef= getRef(position);
-//                String postKey = postRef.getKey();
-//                postRef.addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(DataSnapshot dataSnapshot) {
-//                        latitude = dataSnapshot.child("koordinatTempat").child("latitude").getValue(Double.class);
-//                        longtitude = dataSnapshot.child("koordinatTempat").child("longtitude").getValue(Double.class);
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(DatabaseError databaseError) {
-//
-//                    }
-//                });
-//
-//                final KajianList clickItem = model;
-//                viewHolder.setItemClickListener(new ItemClickListener() {
-//                    @Override
-//                    public void onCLick(View view, int position, boolean isLongClick) {
-//                        //String url = viewHolder.txtTempat.getText().toString();
-////                        Intent intent = new Intent(Intent.ACTION_VIEW);
-////                        intent.setData(Uri.parse(url));
-//                        Intent intent = new Intent(getActivity(), KajianDescription.class);
-//                        Bundle bundle = new Bundle();
-//                        String url = "http://maps.google.com/maps?q=" + latitude + "," + longtitude;
-//                        String namaUst = model.getNama();
-//                        String tema = model.getDepartemen();
-//                        String deskripsi = model.getDeskripsi();
-//                        String pict =  model.getPict();
-//                        String tempat = model.getKegiatan();
-//                        bundle.putString("namaUst",namaUst);
-//                        bundle.putString("tempat",tempat);
-//                        bundle.putString("tema",tema);
-//                        bundle.putString("deskripsi",deskripsi);
-//                        bundle.putString("url",url);
-//                        bundle.putString("pict",pict);
-//                        intent.putExtras(bundle);
-//                        startActivity(intent);
-//
-//                    }
-//                });
-//            }
-//        };
-
-    }
 
     void checkFieldsForEmptyValues(){
 
@@ -570,100 +337,42 @@ public class FindingFragment extends Fragment implements OnMapReadyCallback{
         ((AppCompatActivity) getActivity()).getSupportActionBar().setCustomView(textView);
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
-        if (savedInstanceState == null) {
-            needsInit=true;
-        }
 
-        SupportMapFragment fragment = (SupportMapFragment)getChildFragmentManager().findFragmentById(R.id.map);
-        fragment.getMapAsync(this);
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
+        adapter.addFragment(new MapsFragment(), "MAPS");
+        adapter.addFragment(new ListFragment(), "LIST");
+        viewPager.setAdapter(adapter);
     }
 
-    public void onMapReady(GoogleMap googleMap) {
-        map = googleMap;
-        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        kajianlist.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot s : dataSnapshot.getChildren()) {
-                    final KajianList kajianList = s.getValue(KajianList.class);
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
 
+        public ViewPagerAdapter(FragmentManager manager) {
+            super(manager);
+        }
 
-                    kajian.add(kajianList);
-                    for (int i = 0; i < kajian.size(); i++) {
-                        final String tema = kajianList.getDepartemen();
-                        final String tempat = kajianList.getNama();
-                        final String deskripsi = kajianList.getDeskripsi();
-                        final String namaUst = kajianList.getKegiatan();
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
 
-                        LatLng latLng = new LatLng(kajianList.getLatitude(), kajianList.getLongitude());
-                        if (map != null) {
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
 
-                            marker = map.addMarker(new MarkerOptions().position(latLng)
-                                    .title(kajianList.getDepartemen())
-                                    .snippet(kajianList.getKegiatan()));
+        public void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
 
-                        }
-
-//                        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//                            @Override
-//                            public boolean onMarkerClick(Marker marker) {
-//
-//                                Intent intent = new Intent(getActivity(), KajianDescription.class);
-//                                Bundle bundle = new Bundle();
-//                                String url = "http://maps.google.com/maps?q=" + kajianList.getLatitude() + "," + kajianList.getLongitude();
-//                                bundle.putString("tema",tema);
-//                                bundle.putString("url",url);
-//                                bundle.putString("namaUst",namaUst);
-//                                bundle.putString("tempat",tempat);
-//                                bundle.putString("deskripsi",deskripsi);
-////                                bundle.putString("pict",pict);
-//                                intent.putExtras(bundle);
-//                                startActivity(intent);
-//                                return false;
-//                            }
-//                        });
-
-                    }
-
-
-
-                    map.getUiSettings().setMyLocationButtonEnabled(true);
-
-                    // Zoom to device's current location
-                    if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-                            ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                        map.setMyLocationEnabled(true);
-                        LocationManager locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
-                        String provider = locationManager.getBestProvider(new Criteria(), true);
-                        Location myLocation = locationManager.getLastKnownLocation(provider);
-                        if(myLocation != null) {
-                            LatLng currentLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
-                            map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 14));
-                            map.animateCamera(CameraUpdateFactory.zoomTo(13), 2000, null);
-
-                            Circle circle = map.addCircle(new CircleOptions()
-                                    .center(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()))
-                                    .radius(3000)
-                                    .strokeColor(Color.parseColor("#009382"))
-                                    .fillColor(Color.TRANSPARENT));
-                        } else {
-                            map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(29.9648943,-90.1095941)));
-                            map.moveCamera(CameraUpdateFactory.zoomTo(14));
-                        }
-                    }
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
     }
 
 }
